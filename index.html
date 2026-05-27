@@ -16,530 +16,964 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{
-  --bg:#1a1a2e;--card:#16213e;--card2:#1f4068;--accent:#e94560;--text:#e2e2e2;--text-dim:#a0a0b8;
-  --gold:#f5b041;--green:#2ecc71;--blue:#3498db;--purple:#9b59b6;
-  --fs-xs:0.75rem;--fs-sm:0.85rem;--fs-md:1rem;--fs-lg:1.15rem;--fs-xl:1.4rem;
+  --bg:#1a1a2e;--card:#16213e;--card2:#1e2a45;--border:#2a2a4a;
+  --orange:#D85A30;--gold:#EF9F27;--green:#25D366;--red:#e74c3c;--blue:#3a86ff;--purple:#9b59b6;
+  --text:#e8e8f0;--muted:#8888aa;--radius:14px;--radius-sm:10px;
+  --fs-xs:13px;--fs-sm:15px;--fs-md:17px;--fs-lg:20px;--fs-xl:24px;
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{
-  font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);
-  padding:15px 15px 75px 15px;max-width:500px;margin:0 auto;line-height:1.4;
-}
-h1,h2,h3,.font-syne{font-family:'Syne',sans-serif;font-weight:700;}
-.header{display:flex;justify-content:between;align-items:center;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--card2);}
-.header h1{font-size:var(--fs-xl);background:linear-gradient(45deg,var(--gold),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.card{background:var(--card);border-radius:12px;padding:15px;margin-bottom:15px;box-shadow:0 4px 15px rgba(0,0,0,0.2);border-left:4px solid var(--card2);}
-.card-title{font-size:var(--fs-md);color:var(--gold);margin-bottom:12px;display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:0.5px;}
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:6px;
-  padding:10px 15px;border-radius:8px;font-family:'Syne',sans-serif;font-weight:700;
-  font-size:var(--fs-sm);cursor:pointer;transition:all 0.2s;border:none;text-decoration:none;
-}
-.btn-pri{background:var(--accent);color:#fff;}
-.btn-pri:active{transform:scale(0.97);filter:brightness(0.9);}
-.btn-sec{background:var(--card2);color:var(--text);}
-.btn-danger{background:#c0392b;color:#fff;}
-.form-group{margin-bottom:12px;}
-.form-group label{display:block;font-size:var(--fs-xs);color:var(--text-dim);margin-bottom:4px;text-transform:uppercase;}
-.form-control{
-  width:100%;background:var(--bg);border:1px solid var(--card2);border-radius:8px;
-  padding:10px;color:var(--text);font-size:var(--fs-md);font-family:inherit;outline:none;
-}
-.form-control:focus{border-color:var(--gold);}
-.item-row{
-  display:grid;grid-template-columns:2.5fr 1fr 1fr 1.2fr 40px;gap:6px;margin-bottom:8px;align-items:center;
-  background:rgba(0,0,0,0.15);padding:6px;border-radius:6px;
-}
-.item-row input,.item-row select{
-  background:var(--bg);border:1px solid var(--card2);color:var(--text);padding:6px;
-  border-radius:4px;font-size:var(--fs-sm);width:100%;outline:none;
-}
-.item-row input:focus,.item-row select:focus{border-color:var(--gold);}
-.btn-del{background:none;border:none;color:#e74c3c;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.nav-bar{
-  position:fixed;bottom:0;left:0;right:0;background:var(--card);display:flex;
-  justify-content:space-around;padding:10px 0;border-top:1px solid var(--card2);z-index:999;
-}
-.nav-item{
-  display:flex;flex-direction:column;align-items:center;color:var(--text-dim);
-  font-size:var(--fs-xs);cursor:pointer;text-decoration:none;font-weight:500;
-}
-.nav-item i{font-size:1.4rem;margin-bottom:2px;}
-.nav-item.active{color:var(--gold);}
-.badge{display:inline-block;padding:2px 6px;border-radius:4px;font-size:var(--fs-xs);font-weight:700;}
-.badge-gold{background:rgba(245,176,65,0.15);color:var(--gold);}
-.bar-bg{background:rgba(255,255,255,0.05);border-radius:4px;height:6px;width:100%;margin-top:4px;overflow:hidden;}
-.bar-fill{height:100%;border-radius:4px;transition:width 0.3s;}
-.history-item{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:10px;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;
-}
-.history-item:last-child{border-bottom:none;}
-.history-item:active{background:rgba(255,255,255,0.02);}
-.product-card{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);
-}
-.product-card:last-child{border-bottom:none;}
-.price-tag{font-family:Syne;font-weight:700;}
-.price-best{color:var(--green);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:var(--fs-sm);overflow:hidden}
+#app{display:flex;flex-direction:column;height:100%;max-width:440px;margin:0 auto;position:relative}
+
+/* HEADER */
+.header{background:var(--card);border-bottom:1px solid var(--border);padding:14px 16px 12px;flex-shrink:0}
+.header-top{display:flex;align-items:center;justify-content:space-between}
+.header h1{font-family:'Syne',sans-serif;font-size:var(--fs-xl);font-weight:800;color:#fff;letter-spacing:-.3px}
+.header h1 span{color:var(--orange)}
+.header-sub{font-size:var(--fs-xs);color:var(--muted);margin-top:3px}
+.install-btn{background:var(--orange);color:#fff;border:none;border-radius:var(--radius-sm);padding:8px 12px;font-size:var(--fs-xs);font-family:'DM Sans',sans-serif;cursor:pointer;display:none;align-items:center;gap:5px;font-weight:600}
+.install-btn.visible{display:flex}
+
+/* NAV */
+.nav{display:flex;background:var(--card);border-bottom:1px solid var(--border);flex-shrink:0}
+.nav-tab{flex:1;padding:11px 4px 9px;border:none;background:none;color:var(--muted);font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;border-bottom:2px solid transparent;transition:color .2s}
+.nav-tab i{font-size:22px}
+.nav-tab.active{color:var(--orange);border-bottom-color:var(--orange)}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch;padding-bottom:20px}
+.content::-webkit-scrollbar{display:none}
+.view{display:none}.view.active{display:block}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+.card-title{font-family:'Syne',sans-serif;font-size:var(--fs-sm);font-weight:700;color:var(--gold);margin-bottom:12px;display:flex;align-items:center;gap:7px}
+
+/* TIENDA CHIPS */
+.tienda-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.tienda-chip{padding:12px 6px;border-radius:var(--radius-sm);border:2px solid var(--border);background:var(--card2);color:var(--muted);font-size:var(--fs-sm);font-weight:600;cursor:pointer;text-align:center;transition:all .15s;font-family:'Syne',sans-serif}
+.tienda-chip.merc{--tc:#009f6b}.tienda-chip.lidl{--tc:#0050aa}.tienda-chip.aldi{--tc:#00adef}
+.tienda-chip.selected{border-color:var(--tc);color:var(--tc);background:rgba(255,255,255,.04)}
+.tienda-chip:active{transform:scale(.96)}
+.dot-merc{color:#009f6b}.dot-lidl{color:#0050aa}.dot-aldi{color:#00adef}
+
+/* FORM */
+.form-group{margin-bottom:11px}
+.form-label{font-size:var(--fs-xs);color:var(--muted);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.5px;font-weight:500}
+.form-input{width:100%;background:#0d0d1e;border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:var(--fs-md);outline:none;transition:border .2s}
+.form-input:focus{border-color:var(--orange)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.form-row-3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px}
+select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238888aa' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-color:#0d0d1e;padding-right:32px}
+option{background:#16213e}
+
+/* BUTTONS */
+.btn{padding:12px 16px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--card);color:var(--text);font-family:'DM Sans',sans-serif;font-size:var(--fs-sm);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s;font-weight:500}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--orange);color:#fff;border-color:var(--orange);font-weight:600;width:100%;justify-content:center}
+.btn-gold{background:var(--gold);color:#1a1a2e;border-color:var(--gold);font-weight:700;width:100%;justify-content:center}
+.btn-danger{background:transparent;color:var(--red);border-color:rgba(231,76,60,.4);font-size:var(--fs-xs);padding:7px 10px}
+.btn-sm{padding:8px 12px;font-size:var(--fs-xs)}
+.btn-scan{background:linear-gradient(135deg,#2a1a4e,#1a2a4e);border:2px dashed var(--purple);color:#c39bd3;width:100%;justify-content:center;padding:18px;border-radius:var(--radius);flex-direction:column;gap:6px;font-size:var(--fs-md)}
+.btn-scan i{font-size:32px;color:var(--purple)}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:4px 9px;border-radius:20px;font-size:var(--fs-xs);font-weight:500}
+.badge-orange{background:rgba(216,90,48,.15);color:var(--orange);border:1px solid rgba(216,90,48,.3)}
+.badge-green{background:rgba(37,211,102,.12);color:var(--green);border:1px solid rgba(37,211,102,.3)}
+.badge-gold{background:rgba(239,159,39,.12);color:var(--gold);border:1px solid rgba(239,159,39,.3)}
+.badge-red{background:rgba(231,76,60,.12);color:var(--red);border:1px solid rgba(231,76,60,.3)}
+.badge-blue{background:rgba(58,134,255,.12);color:var(--blue);border:1px solid rgba(58,134,255,.3)}
+
+/* TICKET LIST */
+.ticket-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;cursor:pointer;transition:border .2s;display:flex;justify-content:space-between;align-items:flex-start}
+.ticket-item:active{border-color:var(--orange)}
+.t-name{font-family:'Syne',sans-serif;font-size:var(--fs-md);font-weight:700;color:#fff}
+.t-date{font-size:var(--fs-xs);color:var(--muted);margin-top:3px}
+.t-items{font-size:var(--fs-xs);color:var(--gold);margin-top:4px}
+.t-price{font-family:'Syne',sans-serif;font-size:var(--fs-xl);font-weight:800;color:var(--orange)}
+.t-count{font-size:var(--fs-xs);color:var(--muted);text-align:right}
+
+/* PROD ROW */
+.prod-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.prod-row:last-child{border-bottom:none}
+.prod-name{font-size:var(--fs-md);color:var(--text);flex:1;line-height:1.3}
+.prod-meta{font-size:var(--fs-xs);color:var(--muted);margin-top:2px}
+.prod-price{font-family:'Syne',sans-serif;font-size:var(--fs-lg);font-weight:700;color:var(--gold);margin-left:10px;white-space:nowrap}
+.prod-unit{font-size:11px;color:var(--muted);text-align:right}
+
+/* COMPARADOR */
+.compare-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;cursor:pointer}
+.compare-header{padding:12px 14px;background:rgba(239,159,39,.07);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.compare-product{font-family:'Syne',sans-serif;font-size:var(--fs-md);font-weight:700;color:#fff}
+.compare-row{display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border);gap:10px}
+.compare-row:last-child{border-bottom:none}
+.compare-row.best{background:rgba(37,211,102,.06)}
+.compare-shop{font-size:var(--fs-md);flex:1;font-weight:600}
+.compare-qty{font-size:var(--fs-xs);color:var(--muted)}
+.compare-price{font-family:'Syne',sans-serif;font-size:var(--fs-lg);font-weight:800}
+.compare-unit-price{font-size:12px;color:var(--muted);text-align:right}
+.best-label{font-size:11px;padding:3px 8px;background:var(--green);color:#fff;border-radius:10px;font-weight:700;white-space:nowrap}
+
+/* TREND */
+.trend-up{color:var(--red);font-weight:600;font-size:var(--fs-xs)}
+.trend-down{color:var(--green);font-weight:600;font-size:var(--fs-xs)}
+.trend-eq{color:var(--muted);font-size:var(--fs-xs)}
+.trend-col{text-align:right;min-width:64px}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center}
+.stat-val{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--orange)}
+.stat-label{font-size:12px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.4px}
+
+/* SAVING */
+.saving-highlight{background:rgba(37,211,102,.08);border:1px solid rgba(37,211,102,.25);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.saving-highlight i{color:var(--green);font-size:26px;flex-shrink:0}
+.saving-text{font-size:var(--fs-sm);color:var(--text);line-height:1.4}
+.saving-amount{font-family:'Syne',sans-serif;font-size:var(--fs-lg);font-weight:700;color:var(--green)}
+
+/* EMPTY */
+.empty{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty i{font-size:56px;margin-bottom:14px;display:block;color:var(--border)}
+.empty p{font-size:var(--fs-sm);line-height:1.6}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border-radius:var(--radius) var(--radius) 0 0;width:100%;max-width:440px;max-height:91vh;overflow-y:auto;padding:18px;border-top:2px solid var(--orange);animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(50px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
+.modal-title{font-family:'Syne',sans-serif;font-size:var(--fs-lg);font-weight:800;color:#fff;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.modal-close{background:none;border:none;color:var(--muted);font-size:24px;cursor:pointer;padding:0 4px;line-height:1}
+
+/* SCAN RESULT */
+.scan-result{background:#0d0d1e;border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:12px;max-height:160px;overflow-y:auto;font-size:var(--fs-xs);color:var(--muted);line-height:1.5}
+
+/* AI LOADING */
+.ai-loading{display:flex;flex-direction:column;align-items:center;padding:28px;gap:12px;color:var(--muted)}
+.ai-spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:14px 0}
+.section-label{font-size:var(--fs-xs);color:var(--gold);text-transform:uppercase;letter-spacing:.6px;font-weight:600;margin-bottom:10px}
+
+/* CHART CONTAINER */
+.chart-wrap{position:relative;height:200px;margin-top:10px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#2a2a4a;color:#fff;padding:12px 20px;border-radius:24px;font-size:var(--fs-sm);opacity:0;transition:all .3s;z-index:200;border:1px solid var(--border);pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* PROGRESS BAR */
+.bar-bg{background:var(--border);border-radius:4px;height:8px;margin-top:5px}
+.bar-fill{height:8px;border-radius:4px;transition:width .5s}
 </style>
 </head>
 <body>
-
-<div class="header">
-  <h1 id="appTitle">SuperComparador</h1>
-  <div id="syncBadge" class="badge" style="background:rgba(46,204,113,0.15);color:var(--green);"><i class="ti ti-cloud-check"></i> Local</div>
-</div>
-
-<div id="view-nuevo" class="view">
-  <div class="card" style="border-left-color:var(--accent);">
-    <div class="card-title"><i class="ti ti-receipt"></i> Datos del Tique</div>
-    
-    <div style="display:flex; gap:10px; margin-bottom:15px;">
-      <button type="button" class="btn btn-sec" id="btnScan" style="flex:1;">
-        <i class="ti ti-camera"></i> Escanear Tique
-      </button>
-      <button type="button" class="btn btn-pri" id="btnOpenJsonModal" style="flex:1; background:linear-gradient(135deg, #00f2fe, #4facfe); border:none;">
-        <i class="ti ti-code"></i> Pegar JSON
+<div id="app">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <h1>Super<span>Comparador</span></h1>
+        <div class="header-sub">Mercadona · Lidl · Aldi</div>
+      </div>
+      <button class="install-btn" id="installBtn" onclick="installApp()">
+        <i class="ti ti-download"></i> Instalar
       </button>
     </div>
+  </div>
 
+  <nav class="nav">
+    <button class="nav-tab active" onclick="showView('inicio')"><i class="ti ti-home"></i>Inicio</button>
+    <button class="nav-tab" onclick="showView('tiques')"><i class="ti ti-receipt"></i>Tiques</button>
+    <button class="nav-tab" onclick="showView('comparar')"><i class="ti ti-arrows-diff"></i>Comparar</button>
+    <button class="nav-tab" onclick="showView('stats')"><i class="ti ti-chart-pie"></i>Stats</button>
+  </nav>
+
+  <div class="content">
+
+    <!-- INICIO -->
+    <div class="view active" id="view-inicio">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-val" id="s-tiques">0</div><div class="stat-label">Tiques</div></div>
+        <div class="stat-card"><div class="stat-val" id="s-prods">0</div><div class="stat-label">Productos</div></div>
+        <div class="stat-card"><div class="stat-val" id="s-gasto">0€</div><div class="stat-label">Gasto total</div></div>
+        <div class="stat-card"><div class="stat-val" id="s-ahorro">0€</div><div class="stat-label">Ahorro posible</div></div>
+      </div>
+      <div id="saving-banner"></div>
+      <button class="btn btn-primary" onclick="openNuevoTique()" style="margin-bottom:10px"><i class="ti ti-plus"></i> Nuevo Tique</button>
+      <button class="btn btn-gold" onclick="showView('comparar')"><i class="ti ti-arrows-diff"></i> Ver Comparador</button>
+      <div class="divider"></div>
+      <div class="section-label">Últimos tiques</div>
+      <div id="ultimos-tiques"></div>
+    </div>
+
+    <!-- TIQUES -->
+    <div class="view" id="view-tiques">
+      <button class="btn btn-primary" onclick="openNuevoTique()" style="margin-bottom:14px"><i class="ti ti-plus"></i> Añadir Tique</button>
+      <div id="lista-tiques"></div>
+    </div>
+
+    <!-- COMPARAR -->
+    <div class="view" id="view-comparar">
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title"><i class="ti ti-search"></i> Buscar producto</div>
+        <input class="form-input" id="search-prod" placeholder="Leche, arroz, aceite..." oninput="renderComparador()"/>
+      </div>
+      <div id="comparador-lista"></div>
+    </div>
+
+    <!-- STATS -->
+    <div class="view" id="view-stats">
+      <div id="stats-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL NUEVO TIQUE -->
+<div class="modal-overlay" id="modal-tique">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">
+      <span id="modal-tique-title">Nuevo Tique</span>
+      <button class="modal-close" onclick="closeModal('modal-tique')"><i class="ti ti-x"></i></button>
+    </div>
+
+    <!-- TIENDA -->
     <div class="form-group">
-      <label>Supermercado</label>
-      <select id="tiendaSelect" class="form-control">
-        <option value="Mercadona">Mercadona</option>
-        <option value="Lidl">Lidl</option>
-        <option value="Aldi">Aldi</option>
+      <div class="form-label">Supermercado</div>
+      <div class="tienda-grid">
+        <div class="tienda-chip merc" id="chip-Mercadona" onclick="selectTienda('Mercadona')">🟢 Mercadona</div>
+        <div class="tienda-chip lidl" id="chip-Lidl" onclick="selectTienda('Lidl')">🔵 Lidl</div>
+        <div class="tienda-chip aldi" id="chip-Aldi" onclick="selectTienda('Aldi')">🔷 Aldi</div>
+      </div>
+    </div>
+
+    <div class="form-row" style="margin-bottom:14px">
+      <div class="form-group" style="margin-bottom:0">
+        <div class="form-label">Fecha</div>
+        <input class="form-input" id="tique-fecha" type="date"/>
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <div class="form-label">Total tique (€)</div>
+        <input class="form-input" id="tique-total" type="number" step="0.01" placeholder="0.00"/>
+      </div>
+    </div>
+
+    <!-- JSON IMPORT -->
+    <div class="divider"></div>
+    <div class="section-label">📂 Importar tique desde JSON</div>
+    <input type="file" id="json-input" accept=".json,application/json" style="display:none" onchange="handleJSON(this)"/>
+    <button class="btn btn-scan" onclick="document.getElementById('json-input').click()">
+      <i class="ti ti-file-import"></i>
+      Importar archivo JSON
+    </button>
+    <div id="scan-status" style="margin-top:10px"></div>
+
+    <!-- PRODUCTOS -->
+    <div class="divider"></div>
+    <div class="section-label">Productos del tique</div>
+    <div id="productos-tique"></div>
+
+    <div class="card" style="background:#0d0d1e;margin-bottom:12px">
+      <div class="card-title" style="font-size:var(--fs-xs);margin-bottom:10px"><i class="ti ti-plus-circle"></i> Añadir producto manualmente</div>
+      <div class="form-group" style="margin-bottom:8px">
+        <input class="form-input" id="prod-nombre" placeholder="Nombre del producto"/>
+      </div>
+      <div class="form-row-3" style="margin-bottom:8px">
+        <input class="form-input" id="prod-cantidad" type="number" step="0.001" placeholder="Cantidad"/>
+        <select class="form-input" id="prod-unidad">
+          <option value="ud">ud</option>
+          <option value="kg">kg</option>
+          <option value="g">g</option>
+          <option value="l">l</option>
+          <option value="ml">ml</option>
+          <option value="pack">pack</option>
+        </select>
+        <input class="form-input" id="prod-precio" type="number" step="0.01" placeholder="€"/>
+      </div>
+      <select class="form-input" id="prod-cat" style="margin-bottom:10px">
+        <option value="Alimentación">Alimentación</option>
+        <option value="Lácteos">Lácteos</option>
+        <option value="Carnicería">Carnicería</option>
+        <option value="Frutas y Verduras">Frutas y Verduras</option>
+        <option value="Congelados">Congelados</option>
+        <option value="Bebidas">Bebidas</option>
+        <option value="Limpieza">Limpieza</option>
+        <option value="Higiene">Higiene</option>
+        <option value="Otros">Otros</option>
       </select>
+      <button class="btn btn-sm btn-primary" onclick="addProd()" style="width:100%"><i class="ti ti-plus"></i> Añadir</button>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-      <div class="form-group">
-        <label>Fecha</label>
-        <input type="date" id="fechaInput" class="form-control"/>
-      </div>
-      <div class="form-group">
-        <label>Total (€)</label>
-        <input type="number" step="0.01" id="totalInput" class="form-control" placeholder="0.00"/>
-      </div>
+    <button class="btn btn-gold" onclick="guardarTique()"><i class="ti ti-device-floppy"></i> Guardar Tique</button>
+  </div>
+</div>
+
+<!-- MODAL DETALLE TIQUE -->
+<div class="modal-overlay" id="modal-detalle">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">
+      <span id="detalle-titulo">Detalle</span>
+      <button class="modal-close" onclick="closeModal('modal-detalle')"><i class="ti ti-x"></i></button>
     </div>
+    <div id="detalle-content"></div>
   </div>
+</div>
 
-  <div class="card" style="border-left-color:var(--gold);">
-    <div class="card-title" style="justify-content:space-between;">
-      <span><i class="ti ti-basket"></i> Productos</span>
-      <button type="button" class="btn btn-sec" id="btnAddItem" style="padding:4px 8px;font-size:var(--fs-xs);"><i class="ti ti-plus"></i> Añadir</button>
+<!-- MODAL HISTORIAL PRODUCTO -->
+<div class="modal-overlay" id="modal-historial">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">
+      <span id="hist-titulo">Historial</span>
+      <button class="modal-close" onclick="closeModal('modal-historial')"><i class="ti ti-x"></i></button>
     </div>
-    <div id="itemsContainer"></div>
-  </div>
-
-  <div style="display:flex;gap:10px;margin-top:15px;">
-    <button class="btn btn-sec" id="btnLimpiar" style="flex:1;"><i class="ti ti-trash"></i> Limpiar</button>
-    <button class="btn btn-pri" id="btnGuardar" style="flex:2;"><i class="ti ti-device-floppy"></i> Guardar Tique</button>
+    <div id="hist-content"></div>
   </div>
 </div>
 
-<div id="jsonModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,10,20,0.95); z-index:9999; align-items:center; justify-content:center; padding:20px;">
-  <div class="card" style="width:100%; max-width:450px; border:1px solid var(--gold); background:var(--card);">
-    <div class="card-title" style="display:flex; justify-content:space-between; align-items:center;">
-      <span><i class="ti ti-json"></i> Importar desde Asistente</span>
-      <button type="button" id="btnCloseJsonModal" style="background:none; border:none; color:var(--text-dim); font-size:var(--fs-xl); cursor:pointer;">&times;</button>
-    </div>
-    <p style="font-size:var(--fs-xs); color:var(--text-dim); margin-bottom:12px;">Pega aquí el código JSON generado a partir de la foto del tique:</p>
-    <textarea id="jsonInput" rows="12" style="width:100%; background:var(--bg); border:1px solid var(--card2); color:var(--text); font-family:monospace; padding:10px; border-radius:8px; resize:none; margin-bottom:15px; font-size:var(--fs-xs);" placeholder='{ "tienda": "Aldi", "fecha": "2026-05-27", ... }'></textarea>
-    <div style="display:flex; gap:10px;">
-      <button type="button" class="btn btn-sec" id="btnCancelJson" style="flex:1;">Cancelar</button>
-      <button type="button" class="btn btn-pri" id="btnProcessJson" style="flex:1;">Procesar e Importar</button>
-    </div>
-  </div>
-</div>
-
-<div id="view-historial" class="view" style="display:none;">
-  <div class="card" style="border-left-color:var(--blue);">
-    <div class="card-title"><i class="ti ti-history"></i> Tiques Guardados</div>
-    <div id="historyList"></div>
-  </div>
-</div>
-
-<div id="view-comparar" class="view" style="display:none;">
-  <div class="card" style="border-left-color:var(--purple);">
-    <div class="card-title"><i class="ti ti-search"></i> Buscar y Comparar</div>
-    <input type="text" id="searchProduct" class="form-control" placeholder="Ej: Leche, Arroz, Yogur..." style="margin-bottom:15px;"/>
-    <div id="compareResults"></div>
-  </div>
-</div>
-
-<div id="view-stats" class="view" style="display:none;">
-  <div id="statsContainer"></div>
-  <div class="card" style="margin-top:15px;">
-    <div class="card-title"><i class="ti ti-chart-donut"></i> Distribución Visual</div>
-    <canvas id="chartCanvas" style="width:100%;max-height:250px;"></canvas>
-  </div>
-</div>
-
-<div class="nav-bar">
-  <div class="nav-item active" data-view="nuevo"><i class="ti ti-receipt"></i>Nuevo</div>
-  <div class="nav-item" data-view="historial"><i class="ti ti-history"></i>Historial</div>
-  <div class="nav-item" data-view="comparar"><i class="ti ti-scale"></i>Comparar</div>
-  <div class="nav-item" data-view="stats"><i class="ti ti-chart-bar"></i>Estadísticas</div>
-</div>
+<div class="toast" id="toast"></div>
 
 <script>
-// CONFIGURACIÓN Y ESTADO GLOBAL
-const CATEGORIES = ["Alimentación","Lácteos","Frutas y Verduras","Bebidas","Limpieza","Perfumería","Otros"];
-const UNIDS = ["ud","kg","g","l","ml","pack"];
-const TIENDA_COLORS = { "Mercadona": "#00a650", "Lidl": "#0050aa", "Aldi": "#002855" };
+// ============================================================
+// STATE
+// ============================================================
+let DB = JSON.parse(localStorage.getItem('supercompar2') || '{"tiques":[]}');
+let tempProds = [];
+let editingId = null;
+let selectedTienda = '';
+let deferredPrompt = null;
+let histChart = null;
 
-let db = [];
-let ticket = { tienda: "Mercadona", fecha: "", total: 0, items: [] };
-let activeView = "nuevo";
-let myChart = null;
+const TIENDAS = ['Mercadona','Lidl','Aldi'];
+const TIENDA_COLORS = { Mercadona:'#009f6b', Lidl:'#0050aa', Aldi:'#00adef' };
 
-// ELEMENTOS DEL DOM
-const views = document.querySelectorAll('.view');
-const navItems = document.querySelectorAll('.nav-item');
+function save(){ localStorage.setItem('supercompar2', JSON.stringify(DB)); }
+function getApiKey(){ return localStorage.getItem('sc_apikey')||''; }
+function saveApiKey(k){ localStorage.setItem('sc_apikey', k.trim()); }
 
-// INICIALIZACIÓN DE LA APP
-document.addEventListener("DOMContentLoaded", () => {
-  // Cargar datos de localStorage
-  const saved = localStorage.getItem("supercompar_db");
-  if(saved) db = JSON.parse(saved);
-
-  // Setear fecha de hoy por defecto
-  document.getElementById('fechaInput').value = new Date().toISOString().split('T')[0];
-  
-  // Agregar una primera fila vacía por defecto
-  addItemRow();
-  
-  // Registrar eventos de navegación
-  navItems.forEach(item => {
-    item.addEventListener('click', () => {
-      navItems.forEach(n => n.classList.remove('active'));
-      item.classList.add('active');
-      
-      views.forEach(v => v.style.display = 'none');
-      activeView = item.getAttribute('data-view');
-      document.getElementById(`view-${activeView}`).style.display = 'block';
-      
-      if(activeView === 'historial') renderHistory();
-      if(activeView === 'comparar') renderCompare();
-      if(activeView === 'stats') renderStats();
-    });
-  });
-
-  // Eventos de botones
-  document.getElementById('btnAddItem').addEventListener('click', () => addItemRow());
-  document.getElementById('btnLimpiar').addEventListener('click', limpiarFormulario);
-  document.getElementById('btnGuardar').addEventListener('click', guardarTicket);
-  document.getElementById('searchProduct').addEventListener('input', renderCompare);
-  document.getElementById('btnScan').addEventListener('click', () => alert("Para escanear, usa el botón de 'Pegar JSON' y pásale la foto al asistente."));
-
-  // --- INTERCEPCIÓN Y LÓGICA DEL MODAL JSON ---
-  const jsonModal = document.getElementById('jsonModal');
-  const btnOpenJsonModal = document.getElementById('btnOpenJsonModal');
-  const btnCloseJsonModal = document.getElementById('btnCloseJsonModal');
-  const btnCancelJson = document.getElementById('btnCancelJson');
-  const btnProcessJson = document.getElementById('btnProcessJson');
-  const jsonInput = document.getElementById('jsonInput');
-
-  btnOpenJsonModal.addEventListener('click', () => {
-    jsonInput.value = '';
-    jsonModal.style.display = 'flex';
-  });
-
-  const closeModal = () => { jsonModal.style.display = 'none'; };
-  btnCloseJsonModal.addEventListener('click', closeModal);
-  btnCancelJson.addEventListener('click', closeModal);
-
-  btnProcessJson.addEventListener('click', () => {
-    try {
-      const data = JSON.parse(jsonInput.value.trim());
-      
-      if (!data.tienda || !data.productos) {
-        alert('El formato JSON no es válido para SuperComparador.');
-        return;
-      }
-
-      // Sincronizar datos de cabecera
-      document.getElementById('tiendaSelect').value = data.tienda;
-      document.getElementById('fechaInput').value = data.fecha || new Date().toISOString().split('T')[0];
-      document.getElementById('totalInput').value = data.total || 0;
-
-      // Limpiar contenedor físico e interno
-      const container = document.getElementById('itemsContainer');
-      container.innerHTML = '';
-      ticket.items = [];
-
-      // Mapear e inyectar productos procesados
-      data.productos.forEach(prod => {
-        // Asegurar homologación de categorías y unidades por seguridad
-        const catValue = CATEGORIES.includes(prod.categoria) ? prod.categoria : "Alimentación";
-        const unitValue = UNIDS.includes(prod.unidad) ? prod.unidad : "ud";
-        
-        addItemRow(prod.nombre, prod.precio, prod.cantidad, unitValue, catValue);
-      });
-
-      closeModal();
-      actualizarTotalAutomatico();
-      alert('¡Tique importado con éxito! Revisa los campos antes de guardar.');
-
-    } catch (e) {
-      alert('Error al leer el JSON. Asegúrate de copiar el bloque de código completo.');
-      console.error(e);
-    }
-  });
+// ============================================================
+// PWA INSTALL
+// ============================================================
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); deferredPrompt = e;
+  document.getElementById('installBtn').classList.add('visible');
 });
+window.addEventListener('appinstalled', () => {
+  document.getElementById('installBtn').classList.remove('visible');
+  showToast('✅ App instalada');
+});
+function installApp(){
+  if(deferredPrompt){ deferredPrompt.prompt(); deferredPrompt.userChoice.then(()=>deferredPrompt=null); }
+  else showToast('💡 iOS: Compartir → Añadir a inicio');
+}
+if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
 
-// GESTIÓN DINÁMICA DE FILAS EN FORMULARIO
-function addItemRow(nombre="", precio="", cantidad="", unidad="ud", categoria="Alimentación") {
-  const container = document.getElementById('itemsContainer');
-  const id = Date.now() + Math.random().toString(36).substr(2, 5);
-  
-  const row = document.createElement('div');
-  row.className = 'item-row';
-  row.setAttribute('data-id', id);
-  
-  // Select de Categorías
-  let catOptions = CATEGORIES.map(c => `<option value="${c}" ${c===categoria?'selected':''}>${c}</option>`).join('');
-  // Select de Unidades
-  let unitOptions = UNIDS.map(u => `<option value="${u}" ${u===unidad?'selected':''}>${u}</option>`).join('');
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  const map=['inicio','tiques','comparar','stats'];
+  document.querySelectorAll('.nav-tab')[map.indexOf(id)].classList.add('active');
+  if(id==='inicio') renderInicio();
+  if(id==='tiques') renderTiques();
+  if(id==='comparar') renderComparador();
+  if(id==='stats') renderStats();
+}
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o=>
+  o.addEventListener('click', e=>{ if(e.target===o) o.classList.remove('open'); })
+);
 
-  row.innerHTML = `
-    <input type="text" placeholder="Producto" class="row-nombre" value="${nombre}" required />
-    <input type="number" step="0.01" placeholder="P." class="row-precio" value="${precio}" required />
-    <input type="number" step="0.001" placeholder="Cant." class="row-cantidad" value="${cantidad}" required />
-    <select class="row-unidad">${unitOptions}</select>
-    <button type="button" class="btn-del">&times;</button>
-  `;
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
 
-  // Evento para borrar fila
-  row.querySelector('.btn-del').addEventListener('click', () => {
-    row.remove();
-    actualizarTotalAutomatico();
+// ============================================================
+// UTILS
+// ============================================================
+function genId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2); }
+function today(){ return new Date().toISOString().split('T')[0]; }
+function fmtDate(d){
+  if(!d) return '';
+  const [y,m,dd]=d.split('-');
+  return `${dd}/${m}/${y}`;
+}
+function precioUnit(precio, cantidad, unidad){
+  const p=parseFloat(precio), c=parseFloat(cantidad);
+  if(!p||!c||isNaN(p)||isNaN(c)||c===0) return null;
+  if(unidad==='g') return {val:(p/c*1000).toFixed(2),lbl:'€/kg'};
+  if(unidad==='ml') return {val:(p/c*1000).toFixed(2),lbl:'€/l'};
+  return {val:(p/c).toFixed(2),lbl:`€/${unidad}`};
+}
+function normName(s){ return s.trim().toLowerCase().replace(/\s+/g,' '); }
+
+// ============================================================
+// TIENDA SELECTOR
+// ============================================================
+function selectTienda(t){
+  selectedTienda = t;
+  TIENDAS.forEach(s=>{
+    document.getElementById('chip-'+s).classList.toggle('selected', s===t);
   });
-
-  // Escuchar cambios de precio/cantidad para autoregular totales si procede
-  row.querySelectorAll('input').forEach(input => {
-    input.addEventListener('input', actualizarTotalAutomatico);
-  });
-
-  container.appendChild(row);
 }
 
-function actualizarTotalAutomatico() {
-  const rows = document.querySelectorAll('.item-row');
-  let suma = 0;
-  rows.forEach(row => {
-    const p = parseFloat(row.querySelector('.row-precio').value) || 0;
-    const c = parseFloat(row.querySelector('.row-cantidad').value) || 1;
-    // Si la unidad es kg/g/l/ml, multiplicamos. Si es por unidad o pack, depende del tique (normalmente ya viene el total de esa línea)
-    const u = row.querySelector('.row-unidad').value;
-    if(u === 'kg' || u === 'l') {
-      suma += p * c;
-    } else {
-      suma += p; // Asumimos precio de la línea si no es a granel puro
-    }
-  });
-  
-  // Si no se ha introducido total manual todavía, sugerimos/colocamos el calculado
-  const totalInput = document.getElementById('totalInput');
-  if(!totalInput.value || totalInput.getAttribute('data-auto') === 'true') {
-    // Solo actualizamos dinámicamente si el usuario no fijó un total estricto a mano
-    // Dejamos que el JSON tenga prioridad absoluta si se acaba de importar
-  }
+// ============================================================
+// NUEVO TIQUE
+// ============================================================
+function openNuevoTique(){
+  editingId=null; tempProds=[];
+  document.getElementById('modal-tique-title').textContent='Nuevo Tique';
+  document.getElementById('tique-fecha').value=today();
+  document.getElementById('tique-total').value='';
+  document.getElementById('scan-preview').innerHTML='';
+  document.getElementById('scan-status').innerHTML='';
+  document.getElementById('file-input').value='';
+  document.getElementById('cam-input').value='';
+  selectedTienda='';
+  TIENDAS.forEach(s=>document.getElementById('chip-'+s).classList.remove('selected'));
+  renderProds();
+  openModal('modal-tique');
 }
 
-function limpiarFormulario() {
-  document.getElementById('totalInput').value = '';
-  document.getElementById('itemsContainer').innerHTML = '';
-  document.getElementById('fechaInput').value = new Date().toISOString().split('T')[0];
-  addItemRow();
+// ============================================================
+// SCAN CON IA (Claude API)
+// ============================================================
+function handleFile(input){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const b64 = e.target.result.split(',')[1];
+    const mime = file.type;
+    // show preview
+    document.getElementById('scan-preview').innerHTML =
+      `<img src="${e.target.result}" style="width:100%;border-radius:10px;max-height:160px;object-fit:cover;margin-bottom:8px"/>`;
+    scanWithAI(b64, mime);
+  };
+  reader.readAsDataURL(file);
 }
 
-// OPERACIONES DE PERSISTENCIA (GUARDAR)
-function guardarTicket() {
-  const tienda = document.getElementById('tiendaSelect').value;
-  const fecha = document.getElementById('fechaInput').value;
-  const total = parseFloat(document.getElementById('totalInput').value) || 0;
-  
-  const rows = document.querySelectorAll('.item-row');
-  const items = [];
-  
-  rows.forEach(row => {
-    const nombre = row.querySelector('.row-nombre').value.trim().toUpperCase();
-    const precio = parseFloat(row.querySelector('.row-precio').value) || 0;
-    const cantidad = parseFloat(row.querySelector('.row-cantidad').value) || 1;
-    // Buscaremos dinámicamente la categoría mapeando o asumiendo el select oculto o asignado por JSON
-    // Para simplificar la interfaz compacta de celular, si no hay select de categoría visible,
-    // se guarda en el index oculto mapeado por el importador o "Alimentación" por defecto.
-    const unidad = row.querySelector('.row-unidad').value;
-    
-    if(nombre) {
-      items.push({ nombre, precio, cantidad, unidad, categoria: "Alimentación" }); 
-    }
-  });
-
-  if(items.length === 0) {
-    alert("Introduce al menos un producto.");
-    return;
-  }
-
-  const nuevoTique = { id: Date.now(), tienda, fecha, total, items };
-  db.push(nuevoTique);
-  localStorage.setItem("supercompar_db", JSON.stringify(db));
-  
-  alert("¡Tique guardado correctamente!");
-  limpiarFormulario();
-}
-
-// RENDERIZADO DE HISTORIAL
-function renderHistory() {
-  const container = document.getElementById('historyList');
-  if(db.length === 0) {
-    container.innerHTML = `<p style="color:var(--text-dim);font-size:var(--fs-sm);text-align:center;padding:20px;">No hay tiques guardados todavía.</p>`;
-    return;
-  }
-
-  // Ordenar por fecha descendente
-  const sorted = [...db].sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
-  
-  container.innerHTML = sorted.map(t => `
-    <div class="history-item" onclick="alert('Tique de ${t.tienda} con ${t.items.length} productos.')">
-      <div>
-        <div style="font-weight:700;color:${TIENDA_COLORS[t.tienda] || '#fff'}">${t.tienda}</div>
-        <div style="font-size:var(--fs-xs);color:var(--text-dim)">${t.fecha.split('-').reverse().join('/')} &bull; ${t.items.length} prods</div>
-      </div>
-      <div style="font-family:Syne;font-weight:700;font-size:var(--fs-md);color:var(--gold);">${t.total.toFixed(2)}€</div>
-    </div>
-  `).join('');
-}
-
-// RENDERIZADO DEL COMPARADOR DE PRECIOS
-function renderCompare() {
-  const container = document.getElementById('compareResults');
-  const query = document.getElementById('searchProduct').value.trim().toUpperCase();
-  
-  if(!query) {
-    container.innerHTML = `<p style="color:var(--text-dim);font-size:var(--fs-sm);text-align:center;padding:20px;">Escribe el nombre de un producto para comparar.</p>`;
-    return;
-  }
-
-  // Agrupar precios por producto y tienda
-  let mapa = {};
-
-  db.forEach(t => {
-    t.items.forEach(item => {
-      if(item.nombre.includes(query)) {
-        if(!mapa[item.nombre]) mapa[item.nombre] = {};
-        if(!mapa[item.nombre][t.tienda] || mapa[item.nombre][t.tienda].precio > item.precio) {
-          mapa[item.nombre][t.tienda] = { precio: item.precio, fecha: t.fecha, unidad: item.unidad };
-        }
+function handleJSON(input){
+  const file = input.files[0];
+  if(!file) return;
+  const status = document.getElementById('scan-status');
+  status.innerHTML = '<div style="color:var(--muted);font-size:var(--fs-xs)">Leyendo archivo...</div>';
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      // Auto-fill tienda
+      if(data.tienda){
+        const t = ['Mercadona','Lidl','Aldi'].find(x => data.tienda.toLowerCase().includes(x.toLowerCase()));
+        if(t) selectTienda(t);
       }
-    });
-  });
+      // Auto-fill fecha
+      if(data.fecha) document.getElementById('tique-fecha').value = data.fecha;
+      // Auto-fill total
+      if(data.total) document.getElementById('tique-total').value = data.total;
+      // Add productos
+      if(data.productos && data.productos.length){
+        data.productos.forEach(p => {
+          tempProds.push({
+            id: genId(),
+            nombre: p.nombre || 'Producto',
+            precio: parseFloat(p.precio) || 0,
+            cantidad: parseFloat(p.cantidad) || 1,
+            unidad: p.unidad || 'ud',
+            categoria: p.categoria || 'Alimentación'
+          });
+        });
+        renderProds();
+        status.innerHTML = '<div style="background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.3);border-radius:10px;padding:10px 12px;color:var(--green);font-size:var(--fs-sm)">✅ '+data.productos.length+' productos importados correctamente</div>';
+      } else {
+        status.innerHTML = '<div style="color:var(--red);font-size:var(--fs-sm)">⚠️ El JSON no contiene productos</div>';
+      }
+    } catch(err) {
+      status.innerHTML = '<div style="color:var(--red);font-size:var(--fs-sm)">⚠️ Archivo JSON no válido</div>';
+    }
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
 
-  const keys = Object.keys(mapa);
-  if(keys.length === 0) {
-    container.innerHTML = `<p style="color:var(--text-dim);font-size:var(--fs-sm);text-align:center;padding:20px;">No se encontraron coincidencias.</p>`;
+// ============================================================
+// PRODUCTOS TEMP
+// ============================================================
+function addProd(){
+  const nombre = document.getElementById('prod-nombre').value.trim();
+  const precio = parseFloat(document.getElementById('prod-precio').value);
+  const cantidad = parseFloat(document.getElementById('prod-cantidad').value)||1;
+  const unidad = document.getElementById('prod-unidad').value;
+  const categoria = document.getElementById('prod-cat').value;
+  if(!nombre){ showToast('⚠️ Escribe el nombre'); return; }
+  if(!precio||isNaN(precio)){ showToast('⚠️ Escribe el precio'); return; }
+  tempProds.push({id:genId(), nombre, precio, cantidad, unidad, categoria});
+  document.getElementById('prod-nombre').value='';
+  document.getElementById('prod-precio').value='';
+  document.getElementById('prod-cantidad').value='';
+  renderProds();
+  showToast('✅ Producto añadido');
+}
+
+function removeProd(id){ tempProds=tempProds.filter(p=>p.id!==id); renderProds(); }
+
+function renderProds(){
+  const el=document.getElementById('productos-tique');
+  if(!tempProds.length){
+    el.innerHTML='<div style="color:var(--muted);font-size:var(--fs-xs);text-align:center;padding:8px 0 12px">Sin productos aún</div>';
     return;
   }
-
-  container.innerHTML = keys.map(prodName => {
-    const tiendasData = mapa[prodName];
-    // Encontrar el precio más barato
-    let minPrecio = Infinity;
-    Object.values(tiendasData).forEach(d => { if(d.precio < minPrecio) minPrecio = d.precio; });
-
-    let rowsHtml = Object.entries(tiendasData).map(([tienda, data]) => `
-      <div style="display:flex;justify-content:space-between;font-size:var(--fs-sm);margin-top:6px;">
-        <span style="color:${TIENDA_COLORS[tienda]}">${tienda}:</span>
-        <span class="price-tag ${data.precio === minPrecio ? 'price-best' : ''}">${data.precio.toFixed(2)}€/${data.unidad}</span>
+  el.innerHTML=tempProds.map(p=>{
+    const pu=precioUnit(p.precio,p.cantidad,p.unidad);
+    return `<div class="prod-row">
+      <div style="flex:1">
+        <div class="prod-name">${p.nombre}</div>
+        <div class="prod-meta">${p.cantidad} ${p.unidad} · ${p.categoria}</div>
+        ${pu?`<div class="prod-meta" style="color:var(--blue)">${pu.val} ${pu.lbl}</div>`:''}
       </div>
-    `).join('');
-
-    return `
-      <div style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
-        <div style="font-weight:600;font-size:var(--fs-sm);color:var(--gold);">${prodName}</div>
-        ${rowsHtml}
+      <div style="text-align:right;margin-left:8px">
+        <div class="prod-price">${p.precio.toFixed(2)}€</div>
       </div>
-    `;
+      <button class="btn btn-danger btn-sm" style="margin-left:8px" onclick="removeProd('${p.id}')"><i class="ti ti-trash"></i></button>
+    </div>`;
   }).join('');
 }
 
-// RENDERIZADO DE ESTADÍSTICAS Y GRÁFICAS
-function renderStats() {
-  const container = document.getElementById('statsContainer');
-  
-  if(db.length === 0) {
-    container.innerHTML = `<p style="color:var(--text-dim);font-size:var(--fs-sm);text-align:center;padding:20px;">Sin estadísticas suficientes.</p>`;
-    return;
+function guardarTique(){
+  if(!selectedTienda){ showToast('⚠️ Selecciona el supermercado'); return; }
+  if(!tempProds.length){ showToast('⚠️ Añade al menos un producto'); return; }
+  const fecha=document.getElementById('tique-fecha').value||today();
+  const total=parseFloat(document.getElementById('tique-total').value)||tempProds.reduce((s,p)=>s+p.precio,0);
+  if(editingId){
+    const idx=DB.tiques.findIndex(t=>t.id===editingId);
+    DB.tiques[idx]={id:editingId, tienda:selectedTienda, fecha, total, productos:tempProds};
+  } else {
+    DB.tiques.unshift({id:genId(), tienda:selectedTienda, fecha, total, productos:tempProds});
   }
+  save();
+  closeModal('modal-tique');
+  showToast('✅ Tique guardado');
+  renderInicio(); renderTiques();
+}
 
-  let totalGastado = 0;
-  let porTienda = { Mercadona: 0, Lidl: 0, Aldi: 0 };
-  
-  db.forEach(t => {
-    totalGastado += t.total;
-    if(porTienda[t.tienda] !== undefined) porTienda[t.tienda] += t.total;
-  });
+// ============================================================
+// INICIO
+// ============================================================
+function renderInicio(){
+  const tqs=DB.tiques;
+  const allP=tqs.flatMap(t=>t.productos);
+  const gasto=tqs.reduce((s,t)=>s+(t.total||0),0);
+  const ahorro=calcAhorro();
+  document.getElementById('s-tiques').textContent=tqs.length;
+  document.getElementById('s-prods').textContent=allP.length;
+  document.getElementById('s-gasto').textContent=gasto.toFixed(0)+'€';
+  document.getElementById('s-ahorro').textContent=ahorro.total.toFixed(2)+'€';
+  const banner=document.getElementById('saving-banner');
+  if(ahorro.total>0&&ahorro.items.length){
+    const top=ahorro.items[0];
+    banner.innerHTML=`<div class="saving-highlight">
+      <i class="ti ti-pig-money"></i>
+      <div>
+        <div class="saving-text">Comprando <b>${top.producto}</b> en <b style="color:${TIENDA_COLORS[top.tienda]}">${top.tienda}</b> ahorras</div>
+        <div class="saving-amount">−${top.ahorro.toFixed(2)}€ por ${top.unidad}</div>
+      </div>
+    </div>`;
+  } else banner.innerHTML='';
+  const el=document.getElementById('ultimos-tiques');
+  el.innerHTML=!tqs.length
+    ?`<div class="empty"><i class="ti ti-receipt-off"></i><p>Aún no tienes tiques.<br>Pulsa "Nuevo Tique" para empezar.</p></div>`
+    :tqs.slice(0,3).map(t=>tiqHTML(t)).join('');
+}
 
-  container.innerHTML = `
-    <div class="card" style="border-left-color:var(--green)">
-      <div class="card-title"><i class="ti ti-wallet"></i> Gasto Total Acumulado</div>
-      <div style="font-size:var(--fs-xl);font-family:Syne;font-weight:800;color:var(--green); text-align:center;margin:10px 0;">${totalGastado.toFixed(2)} €</div>
+// ============================================================
+// TIQUES
+// ============================================================
+function renderTiques(){
+  const el=document.getElementById('lista-tiques');
+  el.innerHTML=!DB.tiques.length
+    ?`<div class="empty"><i class="ti ti-receipt-off"></i><p>Sin tiques todavía.</p></div>`
+    :DB.tiques.map(t=>tiqHTML(t)).join('');
+}
+
+function tiqHTML(t){
+  const color=TIENDA_COLORS[t.tienda]||'var(--orange)';
+  return `<div class="ticket-item" onclick="verTique('${t.id}')">
+    <div>
+      <div class="t-name" style="color:${color}">${t.tienda}</div>
+      <div class="t-date">${fmtDate(t.fecha)}</div>
+      <div class="t-items">${t.productos.length} productos</div>
     </div>
-    
-    <div class="card" style="border-left-color:var(--gold)">
-      <div class="card-title"><i class="ti ti-building-store"></i> Gasto por Establecimiento</div>
-      ${Object.entries(porTienda).map(([tienda, total]) => {
-        const pct = totalGastado > 0 ? (total / totalGastado * 100).toFixed(0) : 0;
-        return `
-          <div style="margin-bottom:10px;">
-            <div style="display:flex;justify-content:space-between;font-size:var(--fs-sm)">
-              <span style="color:${TIENDA_COLORS[tienda]}">${tienda}</span>
-              <span>${total.toFixed(2)}€ (${pct}%)</span>
-            </div>
-            <div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:${TIENDA_COLORS[tienda]}"></div></div>
+    <div style="text-align:right">
+      <div class="t-price">${(t.total||0).toFixed(2)}€</div>
+      <div class="t-count">${t.productos.length} artíc.</div>
+    </div>
+  </div>`;
+}
+
+function verTique(id){
+  const t=DB.tiques.find(x=>x.id===id);
+  if(!t) return;
+  const color=TIENDA_COLORS[t.tienda]||'var(--orange)';
+  document.getElementById('detalle-titulo').innerHTML=`<span style="color:${color}">${t.tienda}</span> · ${fmtDate(t.fecha)}`;
+  document.getElementById('detalle-content').innerHTML=`
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+      <span class="badge badge-gold"><i class="ti ti-package"></i> ${t.productos.length} productos</span>
+      <span class="badge badge-orange"><i class="ti ti-currency-euro"></i> ${(t.total||0).toFixed(2)}€</span>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      ${t.productos.map(p=>{
+        const pu=precioUnit(p.precio,p.cantidad,p.unidad);
+        return `<div class="prod-row">
+          <div style="flex:1">
+            <div class="prod-name">${p.nombre}</div>
+            <div class="prod-meta">${p.cantidad} ${p.unidad}${pu?` · <span style="color:var(--blue)">${pu.val} ${pu.lbl}</span>`:''}</div>
           </div>
-        `;
+          <div class="prod-price">${p.precio.toFixed(2)}€</div>
+        </div>`;
       }).join('')}
     </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-sm" onclick="editarTique('${id}')" style="flex:1;justify-content:center"><i class="ti ti-edit"></i> Editar</button>
+      <button class="btn btn-danger btn-sm" onclick="eliminarTique('${id}')" style="flex:1;justify-content:center"><i class="ti ti-trash"></i> Eliminar</button>
+    </div>`;
+  openModal('modal-detalle');
+}
+
+function editarTique(id){
+  const t=DB.tiques.find(x=>x.id===id);
+  if(!t) return;
+  closeModal('modal-detalle');
+  editingId=id; tempProds=[...t.productos];
+  document.getElementById('modal-tique-title').textContent='Editar Tique';
+  document.getElementById('tique-fecha').value=t.fecha;
+  document.getElementById('tique-total').value=t.total||'';
+  document.getElementById('scan-preview').innerHTML='';
+  document.getElementById('scan-status').innerHTML='';
+  selectedTienda=t.tienda;
+  TIENDAS.forEach(s=>document.getElementById('chip-'+s).classList.toggle('selected',s===t.tienda));
+  renderProds();
+  openModal('modal-tique');
+}
+
+function eliminarTique(id){
+  if(!confirm('¿Eliminar este tique?')) return;
+  DB.tiques=DB.tiques.filter(t=>t.id!==id);
+  save(); closeModal('modal-detalle');
+  showToast('🗑️ Tique eliminado');
+  renderInicio(); renderTiques();
+}
+
+// ============================================================
+// COMPARADOR CON HISTORIAL Y TENDENCIA
+// ============================================================
+function getProductGroups(){
+  const map={};
+  DB.tiques.forEach(t=>{
+    t.productos.forEach(p=>{
+      const key=normName(p.nombre);
+      if(!map[key]) map[key]={nombre:p.nombre, entradas:[]};
+      map[key].entradas.push({tienda:t.tienda, precio:p.precio, cantidad:p.cantidad, unidad:p.unidad, fecha:t.fecha});
+    });
+  });
+  return Object.values(map);
+}
+
+function renderComparador(){
+  const q=(document.getElementById('search-prod')?.value||'').toLowerCase();
+  const groups=getProductGroups().filter(g=>!q||normName(g.nombre).includes(q));
+  const el=document.getElementById('comparador-lista');
+  if(!groups.length){
+    el.innerHTML=`<div class="empty"><i class="ti ti-arrows-diff"></i><p>${q?'Sin resultados para "'+q+'"':'Añade tiques para comparar precios.'}</p></div>`;
+    return;
+  }
+  el.innerHTML=groups.map(g=>renderGroupCard(g)).join('');
+}
+
+function renderGroupCard(g){
+  // Group by tienda, get best price per tienda with history
+  const byTienda={};
+  g.entradas.forEach(e=>{
+    if(!byTienda[e.tienda]) byTienda[e.tienda]=[];
+    byTienda[e.tienda].push(e);
+  });
+
+  // For each tienda: sort by date, get latest and previous price per unit
+  const rows = TIENDAS.filter(t=>byTienda[t]).map(tienda=>{
+    const entries=byTienda[tienda].sort((a,b)=>a.fecha>b.fecha?1:-1);
+    const last=entries[entries.length-1];
+    const prev=entries.length>1?entries[entries.length-2]:null;
+    const pu=last.cantidad?last.precio/last.cantidad:last.precio;
+    const prevPu=prev?(prev.cantidad?prev.precio/prev.cantidad:prev.precio):null;
+    return {tienda, last, prev, pu, prevPu, entries};
+  }).sort((a,b)=>a.pu-b.pu);
+
+  if(!rows.length) return '';
+  const bestPu=rows[0].pu;
+  const key=normName(g.nombre);
+
+  return `<div class="compare-card" onclick="verHistorial('${key}')">
+    <div class="compare-header">
+      <div class="compare-product">${g.nombre}</div>
+      ${rows.length>1?`<span class="badge badge-gold"><i class="ti ti-history"></i> historial</span>`:''}
+    </div>
+    ${rows.map((r,i)=>{
+      const isBest=i===0;
+      const color=TIENDA_COLORS[r.tienda];
+      const pct=bestPu>0?((r.pu-bestPu)/bestPu*100).toFixed(0):0;
+      // Tendencia
+      let trend='';
+      if(r.prevPu!==null){
+        const diff=r.pu-r.prevPu;
+        const diffPct=((diff/r.prevPu)*100).toFixed(0);
+        if(Math.abs(diff)<0.001) trend=`<div class="trend-eq">⚪ estable</div>`;
+        else if(diff>0) trend=`<div class="trend-up">🔴 +${Math.abs(diffPct)}% subió</div>`;
+        else trend=`<div class="trend-down">🟢 −${Math.abs(diffPct)}% bajó</div>`;
+      }
+      const pu=precioUnit(r.last.precio,r.last.cantidad,r.last.unidad);
+      return `<div class="compare-row${isBest?' best':''}">
+        <div style="flex:1">
+          <div class="compare-shop" style="color:${color}">${r.tienda}</div>
+          <div class="compare-qty">${r.last.cantidad} ${r.last.unidad} · ${fmtDate(r.last.fecha)}</div>
+        </div>
+        <div class="trend-col">${trend}</div>
+        <div style="text-align:right;margin-left:10px">
+          <div class="compare-price" style="color:${isBest?'var(--green)':'var(--text)'}">${r.last.precio.toFixed(2)}€</div>
+          ${pu?`<div class="compare-unit-price">${pu.val} ${pu.lbl}</div>`:''}
+          ${!isBest&&rows.length>1?`<div style="font-size:11px;color:var(--red)">+${pct}%</div>`:''}
+        </div>
+        ${isBest&&rows.length>1?`<span class="best-label" style="margin-left:8px">✓</span>`:''}
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+// ============================================================
+// HISTORIAL CON GRÁFICA
+// ============================================================
+function verHistorial(key){
+  const g=getProductGroups().find(x=>normName(x.nombre)===key);
+  if(!g) return;
+  document.getElementById('hist-titulo').textContent='📈 '+g.nombre;
+
+  const byTienda={};
+  g.entradas.forEach(e=>{
+    if(!byTienda[e.tienda]) byTienda[e.tienda]=[];
+    byTienda[e.tienda].push(e);
+  });
+
+  // Build table
+  const tableRows = TIENDAS.filter(t=>byTienda[t]).map(tienda=>{
+    const entries=byTienda[tienda].sort((a,b)=>a.fecha>b.fecha?1:-1);
+    const last=entries[entries.length-1];
+    const prev=entries.length>1?entries[entries.length-2]:null;
+    const pu=last.cantidad?last.precio/last.cantidad:last.precio;
+    const prevPu=prev?(prev.cantidad?prev.precio/prev.cantidad:prev.precio):null;
+    const color=TIENDA_COLORS[tienda];
+    let trendHTML='<span class="trend-eq">⚪</span>';
+    if(prevPu!==null){
+      const diff=pu-prevPu;
+      const pct=((diff/prevPu)*100).toFixed(0);
+      if(Math.abs(diff)<0.001) trendHTML='<span class="trend-eq">⚪ estable</span>';
+      else if(diff>0) trendHTML=`<span class="trend-up">🔴 +${Math.abs(pct)}%</span>`;
+      else trendHTML=`<span class="trend-down">🟢 −${Math.abs(pct)}%</span>`;
+    }
+    return {tienda, entries, last, pu, prevPu, color, trendHTML};
+  }).sort((a,b)=>a.pu-b.pu);
+
+  const bestPu=tableRows.length?tableRows[0].pu:0;
+
+  // All unique dates
+  const allDates=[...new Set(g.entradas.map(e=>e.fecha))].sort();
+
+  const tableHTML=`
+    <table style="width:100%;border-collapse:collapse;font-size:var(--fs-sm)">
+      <thead>
+        <tr style="border-bottom:1px solid var(--border)">
+          <th style="text-align:left;padding:8px 0;color:var(--muted);font-weight:500;font-size:var(--fs-xs)">Tienda</th>
+          <th style="text-align:right;padding:8px 0;color:var(--muted);font-weight:500;font-size:var(--fs-xs)">Precio</th>
+          <th style="text-align:right;padding:8px 0;color:var(--muted);font-weight:500;font-size:var(--fs-xs)">Ant.</th>
+          <th style="text-align:right;padding:8px 4px;color:var(--muted);font-weight:500;font-size:var(--fs-xs)">Tendencia</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${tableRows.map((r,i)=>`
+          <tr style="border-bottom:1px solid var(--border)${i===0?' background:rgba(37,211,102,.05)':''}">
+            <td style="padding:10px 0;font-weight:600;color:${r.color}">${r.tienda}${i===0&&tableRows.length>1?' <span class="best-label">✓</span>':''}</td>
+            <td style="text-align:right;font-family:Syne;font-size:var(--fs-md);font-weight:700;color:${i===0?'var(--green)':'var(--text)'}">${r.last.precio.toFixed(2)}€</td>
+            <td style="text-align:right;color:var(--muted);font-size:var(--fs-xs)">${r.prevPu?`${(r.prevPu*(r.last.cantidad||1)).toFixed(2)}€`:'—'}</td>
+            <td style="text-align:right;padding-right:4px">${r.trendHTML}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+
+  // Chart datasets
+  const datasets=tableRows.map(r=>{
+    return {
+      label:r.tienda,
+      data:allDates.map(d=>{
+        const e=r.entries.find(x=>x.fecha===d);
+        return e?e.precio:null;
+      }),
+      borderColor:r.color,
+      backgroundColor:r.color+'22',
+      pointBackgroundColor:r.color,
+      pointRadius:5,
+      pointHoverRadius:7,
+      borderWidth:2,
+      tension:.3,
+      spanGaps:true
+    };
+  });
+
+  document.getElementById('hist-content').innerHTML=`
+    ${tableHTML}
+    ${allDates.length>1?`
+    <div class="divider"></div>
+    <div class="section-label">Evolución de precios</div>
+    <div class="chart-wrap">
+      <canvas id="hist-chart"></canvas>
+    </div>`:'<div style="color:var(--muted);font-size:var(--fs-xs);text-align:center;padding:16px 0">Añade más tiques para ver la evolución</div>'}
+    <div class="divider"></div>
+    <div class="section-label">Historial completo</div>
+    ${tableRows.map(r=>`
+      <div style="margin-bottom:12px">
+        <div style="color:${r.color};font-weight:700;font-size:var(--fs-sm);margin-bottom:6px">${r.tienda}</div>
+        ${r.entries.slice().reverse().map(e=>`
+          <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--card2);border-radius:8px;margin-bottom:5px;font-size:var(--fs-sm)">
+            <span style="color:var(--muted)">${fmtDate(e.fecha)}</span>
+            <span>${e.cantidad} ${e.unidad}</span>
+            <span style="font-family:Syne;font-weight:700;color:var(--gold)">${e.precio.toFixed(2)}€</span>
+          </div>`).join('')}
+      </div>`).join('')}
   `;
 
-  // Renderizar Chart.js en el canvas
-  setTimeout(() => {
-    const ctx = document.getElementById('chartCanvas').getContext('2d');
-    if(myChart) myChart.destroy();
-    
-    myChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: Object.keys(porTienda),
-        datasets: [{
-          data: Object.values(porTienda),
-          backgroundColor: Object.keys(porTienda).map(k => TIENDA_COLORS[k]),
-          borderWidth: 0
-        }]
-      },
-      options: {
-        plugins: { legend: { display: true, labels: { color: '#e2e2e2' } } },
-        responsive: true,
-        maintainAspectRatio: false
-      }
+  openModal('modal-historial');
+
+  // Render chart after modal opens
+  if(allDates.length>1){
+    setTimeout(()=>{
+      if(histChart) histChart.destroy();
+      const ctx=document.getElementById('hist-chart');
+      if(!ctx) return;
+      histChart=new Chart(ctx,{
+        type:'line',
+        data:{labels:allDates.map(fmtDate), datasets},
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{labels:{color:'#e8e8f0',font:{size:13,family:'DM Sans'},boxWidth:12}}},
+          scales:{
+            x:{ticks:{color:'#8888aa',font:{size:11}},grid:{color:'#2a2a4a'}},
+            y:{ticks:{color:'#8888aa',font:{size:11},callback:v=>v+'€'},grid:{color:'#2a2a4a'}}
+          }
+        }
+      });
+    },200);
+  }
+}
+
+// ============================================================
+// AHORRO
+// ============================================================
+function calcAhorro(){
+  const groups=getProductGroups();
+  let total=0; const items=[];
+  groups.forEach(g=>{
+    const byTienda={};
+    g.entradas.forEach(e=>{
+      const pu=e.cantidad?e.precio/e.cantidad:e.precio;
+      if(!byTienda[e.tienda]||pu<byTienda[e.tienda].pu) byTienda[e.tienda]={...e,pu};
     });
-  }, 50);
-}
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js')
-      .then(reg => console.log('SuperComparador SW registrado con éxito.', reg.scope))
-      .catch(err => console.error('Error al registrar SW:', err));
+    const rows=Object.entries(byTienda).sort((a,b)=>a[1].pu-b[1].pu);
+    if(rows.length<2) return;
+    const best=rows[0][1], worst=rows[rows.length-1][1];
+    const ah=worst.pu-best.pu;
+    if(ah>0){ total+=ah; items.push({producto:g.nombre,tienda:rows[0][0],ahorro:ah,unidad:best.unidad}); }
   });
+  return {total, items:items.sort((a,b)=>b.ahorro-a.ahorro)};
 }
-</script>
 
+// ============================================================
+// STATS
+// ============================================================
+function renderStats(){
+  const tqs=DB.tiques;
+  if(!tqs.length){
+    document.getElementById('stats-content').innerHTML=`<div class="empty"><i class="ti ti-chart-pie"></i><p>Añade tiques para ver estadísticas.</p></div>`;
+    return;
+  }
+  const gasto=tqs.reduce((s,t)=>s+(t.total||0),0);
+  const byTienda={};
+  TIENDAS.forEach(t=>{byTienda[t]=0;});
+  tqs.forEach(t=>{byTienda[t.tienda]=(byTienda[t.tienda]||0)+(t.total||0);});
+  const byCat={};
+  tqs.flatMap(t=>t.productos).forEach(p=>{byCat[p.categoria]=(byCat[p.categoria]||0)+p.precio;});
+  const catRows=Object.entries(byCat).sort((a,b)=>b[1]-a[1]);
+  const maxCat=catRows[0]?.[1]||1;
+
+  const visitas={};
+  tqs.forEach(t=>{visitas[t.tienda]=(visitas[t.tienda]||0)+1;});
+  const top=Object.entries(visitas).sort((a,b)=>b[1]-a[1])[0];
+
+  document.getElementById('stats-content').innerHTML=`
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-val">${gasto.toFixed(0)}€</div><div class="stat-label">Gasto total</div></div>
+      <div class="stat-card"><div class="stat-val">${tqs.length?((gasto/tqs.length).toFixed(0))+'€':'—'}</div><div class="stat-label">Media/tique</div></div>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-title"><i class="ti ti-building-store"></i> Gasto por supermercado</div>
+      ${TIENDAS.map(t=>{
+        const v=byTienda[t]||0;
+        const pct=gasto>0?(v/gasto*100).toFixed(0):0;
+        const color=TIENDA_COLORS[t];
+        return `<div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+            <span style="color:${color};font-weight:600;font-size:var(--fs-md)">${t}</span>
+            <span style="font-family:Syne;font-weight:700;font-size:var(--fs-md);color:var(--gold)">${v.toFixed(2)}€ <span style="color:var(--muted);font-size:var(--fs-xs)">(${pct}%)</span></span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div>
+        </div>`;
+      }).join('')}
+    </div>
+    ${top?`<div class="card" style="margin-bottom:12px">
+      <div class="card-title"><i class="ti ti-trophy"></i> Más visitado</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:var(--fs-lg);font-weight:700;color:${TIENDA_COLORS[top[0]]}">${top[0]}</div>
+        <span class="badge badge-gold">${top[1]} ${top[1]===1?'visita':'visitas'}</span>
+      </div>
+    </div>`:''}
+    <div class="card">
+      <div class="card-title"><i class="ti ti-tag"></i> Gasto por categoría</div>
+      ${catRows.map(([cat,val])=>{
+        const pct=(val/maxCat*100).toFixed(0);
+        return `<div style="margin-bottom:11px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span style="font-size:var(--fs-sm)">${cat}</span>
+            <span style="font-family:Syne;font-weight:700;color:var(--gold);font-size:var(--fs-sm)">${val.toFixed(2)}€</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:var(--orange)"></div></div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderInicio();
+</script>
 </body>
 </html>
