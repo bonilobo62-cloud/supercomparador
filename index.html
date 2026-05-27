@@ -358,6 +358,8 @@ const TIENDAS = ['Mercadona','Lidl','Aldi'];
 const TIENDA_COLORS = { Mercadona:'#009f6b', Lidl:'#0050aa', Aldi:'#00adef' };
 
 function save(){ localStorage.setItem('supercompar2', JSON.stringify(DB)); }
+function getApiKey(){ return localStorage.getItem('sc_apikey')||''; }
+function saveApiKey(k){ localStorage.setItem('sc_apikey', k.trim()); }
 
 // ============================================================
 // PWA INSTALL
@@ -472,6 +474,10 @@ function handleFile(input){
 
 async function scanWithAI(b64, mime){
   const status = document.getElementById('scan-status');
+  if(!getApiKey()){
+    status.innerHTML='<div style="background:rgba(239,159,39,.1);border:1px solid rgba(239,159,39,.3);border-radius:10px;padding:12px;margin-bottom:10px"><div style="color:var(--gold);font-weight:600;margin-bottom:8px">🔑 Configura tu clave API</div><input id="apikey-input" class="form-input" placeholder="sk-ant-api03-..." style="margin-bottom:8px"/><button class="btn btn-primary btn-sm" onclick="const k=document.getElementById('apikey-input').value;if(k.startsWith('sk-')){saveApiKey(k);showToast('✅ Clave guardada');scanWithAI(b64,mime);}else{showToast('⚠️ Clave no válida');}">Guardar y continuar</button></div>';
+    return;
+  }
   status.innerHTML = `<div class="ai-loading"><div class="ai-spinner"></div><div>Analizando tique con IA...</div></div>`;
 
   const prompt = `Eres un asistente que extrae productos de tiques de supermercado.
@@ -499,7 +505,7 @@ Analiza la imagen del tique y devuelve SOLO un JSON válido con este formato exa
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':'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','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      headers:{'Content-Type':'application/json','x-api-key':getApiKey(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
       body: JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:1000,
