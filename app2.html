@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="theme-color" content="#D85A30"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="SuperCompar"/>
+<title>SuperComparador</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#1a1a2e;--card:#16213e;--card2:#1e2a45;--border:#2a2a4a;
+  --orange:#D85A30;--gold:#EF9F27;--green:#25D366;--red:#e74c3c;--blue:#3a86ff;
+  --text:#e8e8f0;--muted:#8888aa;--r:14px;--rs:10px;
+  --fs-xs:14px;--fs-sm:16px;--fs-md:18px;--fs-lg:21px;--fs-xl:26px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow:hidden}
+#app{display:flex;flex-direction:column;height:100%;max-width:440px;margin:0 auto}
+.header{background:var(--card);border-bottom:1px solid var(--border);padding:14px 16px 11px;flex-shrink:0}
+.header h1{font-family:'Syne',sans-serif;font-size:var(--fs-xl);font-weight:800;color:#fff}
+.header h1 span{color:var(--orange)}
+.header-sub{font-size:var(--fs-xs);color:var(--muted);margin-top:3px}
+.nav{display:flex;background:var(--card);border-bottom:1px solid var(--border);flex-shrink:0}
+.nav-tab{flex:1;padding:11px 4px 9px;border:none;background:none;color:var(--muted);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;border-bottom:2px solid transparent}
+.nav-tab i{font-size:22px}
+.nav-tab.active{color:var(--orange);border-bottom-color:var(--orange)}
+.content{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch;padding-bottom:24px}
+.content::-webkit-scrollbar{display:none}
+.view{display:none}.view.active{display:block}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.card-title{font-family:'Syne',sans-serif;font-size:var(--fs-sm);font-weight:700;color:var(--gold);margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center}
+.stat-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--orange)}
+.stat-label{font-size:13px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.4px}
+.btn{padding:13px 16px;border-radius:var(--rs);border:1px solid var(--border);background:var(--card);color:var(--text);font-family:'DM Sans',sans-serif;font-size:var(--fs-sm);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s;font-weight:500;width:100%;justify-content:center}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--orange);color:#fff;border-color:var(--orange);font-weight:600;margin-bottom:10px}
+.btn-gold{background:var(--gold);color:#1a1a2e;border-color:var(--gold);font-weight:700}
+.btn-danger{background:transparent;color:var(--red);border-color:rgba(231,76,60,.4);font-size:var(--fs-xs);padding:8px 12px;width:auto}
+.btn-import{background:linear-gradient(135deg,#1a1a3e,#1a2a4e);border:2px dashed #6b4fa0;color:#c39bd3;padding:18px;border-radius:var(--r);flex-direction:column;gap:6px;font-size:var(--fs-md)}
+.btn-import i{font-size:32px;color:#9b59b6}
+.form-label{font-size:var(--fs-xs);color:var(--muted);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.5px;font-weight:500}
+.form-input{width:100%;background:#0d0d1e;border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:var(--fs-md);outline:none}
+.form-input:focus{border-color:var(--orange)}
+select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238888aa' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-color:#0d0d1e;padding-right:32px}
+option{background:#16213e}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.form-row-3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px}
+.form-group{margin-bottom:11px}
+.tienda-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.tienda-chip{padding:13px 6px;border-radius:var(--rs);border:2px solid var(--border);background:var(--card2);color:var(--muted);font-size:var(--fs-sm);font-weight:600;cursor:pointer;text-align:center;font-family:'Syne',sans-serif}
+.tienda-chip.merc.selected{border-color:#009f6b;color:#009f6b;background:rgba(0,159,107,.07)}
+.tienda-chip.lidl.selected{border-color:#0050aa;color:#0050aa;background:rgba(0,80,170,.07)}
+.tienda-chip.aldi.selected{border-color:#00adef;color:#00adef;background:rgba(0,173,239,.07)}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:4px 9px;border-radius:20px;font-size:var(--fs-xs);font-weight:500}
+.badge-orange{background:rgba(216,90,48,.15);color:var(--orange);border:1px solid rgba(216,90,48,.3)}
+.badge-gold{background:rgba(239,159,39,.12);color:var(--gold);border:1px solid rgba(239,159,39,.3)}
+.badge-green{background:rgba(37,211,102,.12);color:var(--green);border:1px solid rgba(37,211,102,.3)}
+.badge-red{background:rgba(231,76,60,.12);color:var(--red);border:1px solid rgba(231,76,60,.3)}
+.ticket-item{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-start;cursor:pointer}
+.t-name{font-family:'Syne',sans-serif;font-size:var(--fs-md);font-weight:700}
+.t-date{font-size:var(--fs-xs);color:var(--muted);margin-top:3px}
+.t-items{font-size:var(--fs-xs);color:var(--gold);margin-top:4px}
+.t-price{font-family:'Syne',sans-serif;font-size:var(--fs-xl);font-weight:800;color:var(--orange)}
+.prod-row{display:flex;align-items:flex-start;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.prod-row:last-child{border-bottom:none}
+.prod-name{font-size:var(--fs-md);flex:1;line-height:1.3}
+.prod-meta{font-size:var(--fs-xs);color:var(--muted);margin-top:2px}
+.prod-price{font-family:'Syne',sans-serif;font-size:var(--fs-lg);font-weight:700;color:var(--gold);margin-left:10px;white-space:nowrap}
+.compare-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:12px;overflow:hidden;cursor:pointer}
+.compare-header{padding:12px 14px;background:rgba(239,159,39,.07);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.compare-product{font-family:'Syne',sans-serif;font-size:var(--fs-md);font-weight:700}
+.compare-row{display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border);gap:10px}
+.compare-row:last-child{border-bottom:none}
+.compare-row.best{background:rgba(37,211,102,.06)}
+.compare-shop{font-size:var(--fs-md);flex:1;font-weight:600}
+.compare-price{font-family:'Syne',sans-serif;font-size:var(--fs-lg);font-weight:800}
+.trend-up{color:var(--red);font-weight:600;font-size:var(--fs-xs)}
+.trend-down{color:var(--green);font-weight:600;font-size:var(--fs-xs)}
+.trend-eq{color:var(--muted);font-size:var(--fs-xs)}
+.best-label{font-size:12px;padding:3px 8px;background:var(--green);color:#fff;border-radius:10px;font-weight:700;white-space:nowrap}
+.empty{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty i{font-size:56px;margin-bottom:14px;display:block;color:var(--border)}
+.empty p{font-size:var(--fs-sm);line-height:1.6}
+.divider{height:1px;background:var(--border);margin:14px 0}
+.section-label{font-size:var(--fs-xs);color:var(--gold);text-transform:uppercase;letter-spacing:.6px;font-weight:600;margin-bottom:10px}
+.saving{background:rgba(37,211,102,.08);border:1px solid rgba(37,211,102,.25);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.saving i{color:var(--green);font-size:26px;flex-shrink:0}
+.saving-text{font-size:var(--fs-sm);line-height:1.4}
+.saving-amount{font-family:'Syne',sans-serif;font-size:var(--fs-lg);font-weight:700;color:var(--green)}
+.bar-bg{background:var(--border);border-radius:4px;height:8px;margin-top:6px}
+.bar-fill{height:8px;border-radius:4px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border-radius:var(--r) var(--r) 0 0;width:100%;max-width:440px;max-height:91vh;overflow-y:auto;padding:18px;border-top:2px solid var(--orange);animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(50px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
+.modal-title{font-family:'Syne',sans-serif;font-size:var(--fs-lg);font-weight:800;color:#fff;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.modal-close{background:none;border:none;color:var(--muted);font-size:26px;cursor:pointer;line-height:1}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#2a2a4a;color:#fff;padding:12px 20px;border-radius:24px;font-size:var(--fs-sm);opacity:0;transition:all .3s;z-index:200;border:1px solid var(--border);pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.chart-wrap{position:relative;height:200px;margin-top:10px}
+.status-ok{background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.3);border-radius:var(--rs);padding:12px;color:var(--green);font-size:var(--fs-sm);margin-bottom:10px}
+.status-err{background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.3);border-radius:var(--rs);padding:12px;color:var(--red);font-size:var(--fs-sm);margin-bottom:10px}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="header">
+    <h1>Super<span>Comparador</span></h1>
+    <div class="header-sub">Mercadona · Lidl · Aldi</div>
+  </div>
+  <nav class="nav">
+    <button class="nav-tab active" onclick="showView('inicio')"><i class="ti ti-home"></i>Inicio</button>
+    <button class="nav-tab" onclick="showView('tiques')"><i class="ti ti-receipt"></i>Tiques</button>
+    <button class="nav-tab" onclick="showView('comparar')"><i class="ti ti-arrows-diff"></i>Comparar</button>
+    <button class="nav-tab" onclick="showView('stats')"><i class="ti ti-chart-pie"></i>Stats</button>
+  </nav>
+  <div class="content">
+
+    <!-- INICIO -->
+    <div class="view active" id="view-inicio">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-val" id="s-tiques">0</div><div class="stat-label">Tiques</div></div>
+        <div class="stat-card"><div class="stat-val" id="s-prods">0</div><div class="stat-label">Productos</div></div>
+        <div class="stat-card"><div class="stat-val" id="s-gasto">0€</div><div class="stat-label">Gasto total</div></div>
+        <div class="stat-card"><div class="stat-val" id="s-ahorro">0€</div><div class="stat-label">Ahorro posible</div></div>
+      </div>
+      <div id="saving-banner"></div>
+      <button class="btn btn-primary" onclick="abrirNuevoTique()"><i class="ti ti-plus"></i> Nuevo Tique</button>
+      <button class="btn btn-gold" onclick="showView('comparar')"><i class="ti ti-arrows-diff"></i> Ver Comparador</button>
+      <div class="divider"></div>
+      <div class="section-label">Últimos tiques</div>
+      <div id="ultimos-tiques"></div>
+    </div>
+
+    <!-- TIQUES -->
+    <div class="view" id="view-tiques">
+      <button class="btn btn-primary" onclick="abrirNuevoTique()" style="margin-bottom:14px"><i class="ti ti-plus"></i> Añadir Tique</button>
+      <div id="lista-tiques"></div>
+    </div>
+
+    <!-- COMPARAR -->
+    <div class="view" id="view-comparar">
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title"><i class="ti ti-search"></i> Buscar producto</div>
+        <input class="form-input" id="search-prod" placeholder="Leche, arroz, aceite..." oninput="renderComparador()"/>
+      </div>
+      <div id="comparador-lista"></div>
+    </div>
+
+    <!-- STATS -->
+    <div class="view" id="view-stats">
+      <div id="stats-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL TIQUE -->
+<div class="modal-overlay" id="modal-tique">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">
+      <span id="modal-titulo">Nuevo Tique</span>
+      <button class="modal-close" onclick="closeModal('modal-tique')">×</button>
+    </div>
+    <div class="form-group">
+      <div class="form-label">Supermercado</div>
+      <div class="tienda-grid">
+        <div class="tienda-chip merc" id="chip-Mercadona" onclick="selTienda('Mercadona')">🟢 Mercadona</div>
+        <div class="tienda-chip lidl" id="chip-Lidl" onclick="selTienda('Lidl')">🔵 Lidl</div>
+        <div class="tienda-chip aldi" id="chip-Aldi" onclick="selTienda('Aldi')">🔷 Aldi</div>
+      </div>
+    </div>
+    <div class="form-row" style="margin-bottom:14px">
+      <div class="form-group" style="margin-bottom:0">
+        <div class="form-label">Fecha</div>
+        <input class="form-input" id="t-fecha" type="date"/>
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <div class="form-label">Total (€)</div>
+        <input class="form-input" id="t-total" type="number" step="0.01" placeholder="0.00"/>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-label">📂 Importar desde JSON</div>
+    <input type="file" id="json-file" accept=".json,application/json" style="display:none" onchange="importJSON(this)"/>
+    <button class="btn btn-import" onclick="document.getElementById('json-file').click()">
+      <i class="ti ti-file-import"></i>
+      Seleccionar archivo JSON
+    </button>
+    <div id="import-status" style="margin-top:10px"></div>
+
+    <div class="divider"></div>
+    <div class="section-label">Productos del tique</div>
+    <div id="prods-lista"></div>
+
+    <div class="card" style="background:#0d0d1e;margin-bottom:12px">
+      <div class="card-title" style="font-size:var(--fs-xs);margin-bottom:10px"><i class="ti ti-plus-circle"></i> Añadir manualmente</div>
+      <div class="form-group" style="margin-bottom:8px">
+        <input class="form-input" id="p-nombre" placeholder="Nombre del producto"/>
+      </div>
+      <div class="form-row-3" style="margin-bottom:8px">
+        <input class="form-input" id="p-cantidad" type="number" step="0.001" placeholder="Cant."/>
+        <select class="form-input" id="p-unidad">
+          <option value="ud">ud</option><option value="kg">kg</option><option value="g">g</option>
+          <option value="l">l</option><option value="ml">ml</option><option value="pack">pack</option>
+        </select>
+        <input class="form-input" id="p-precio" type="number" step="0.01" placeholder="€"/>
+      </div>
+      <select class="form-input" id="p-cat" style="margin-bottom:10px">
+        <option>Alimentación</option><option>Lácteos</option><option>Carnicería</option>
+        <option>Frutas y Verduras</option><option>Congelados</option><option>Bebidas</option>
+        <option>Limpieza</option><option>Higiene</option><option>Otros</option>
+      </select>
+      <button class="btn btn-primary" style="margin-bottom:0" onclick="addProd()"><i class="ti ti-plus"></i> Añadir producto</button>
+    </div>
+    <button class="btn btn-gold" onclick="guardarTique()"><i class="ti ti-device-floppy"></i> Guardar Tique</button>
+  </div>
+</div>
+
+<!-- MODAL DETALLE -->
+<div class="modal-overlay" id="modal-detalle">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">
+      <span id="detalle-titulo">Detalle</span>
+      <button class="modal-close" onclick="closeModal('modal-detalle')">×</button>
+    </div>
+    <div id="detalle-content"></div>
+  </div>
+</div>
+
+<!-- MODAL HISTORIAL -->
+<div class="modal-overlay" id="modal-hist">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">
+      <span id="hist-titulo">Historial</span>
+      <button class="modal-close" onclick="closeModal('modal-hist')">×</button>
+    </div>
+    <div id="hist-content"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var DB = JSON.parse(localStorage.getItem('sc3') || '{"tiques":[]}');
+var tempProds = [];
+var editId = null;
+var selTiendaVal = '';
+var histChart = null;
+var TIENDAS = ['Mercadona','Lidl','Aldi'];
+var TC = {Mercadona:'#009f6b', Lidl:'#0050aa', Aldi:'#00adef'};
+
+function save(){ localStorage.setItem('sc3', JSON.stringify(DB)); }
+function genId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2); }
+function today(){ return new Date().toISOString().split('T')[0]; }
+function fmtDate(d){ if(!d) return ''; var p=d.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+function normName(s){ return s.trim().toLowerCase().replace(/\s+/g,' '); }
+
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2800);
+}
+
+function showView(id){
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+  document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
+  document.getElementById('view-'+id).classList.add('active');
+  var map=['inicio','tiques','comparar','stats'];
+  document.querySelectorAll('.nav-tab')[map.indexOf(id)].classList.add('active');
+  if(id==='inicio') renderInicio();
+  if(id==='tiques') renderTiques();
+  if(id==='comparar') renderComparador();
+  if(id==='stats') renderStats();
+}
+
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(function(o){
+  o.addEventListener('click', function(e){ if(e.target===o) o.classList.remove('open'); });
+});
+
+function selTienda(t){
+  selTiendaVal=t;
+  TIENDAS.forEach(function(s){ document.getElementById('chip-'+s).classList.remove('selected'); });
+  document.getElementById('chip-'+t).classList.add('selected');
+}
+
+function abrirNuevoTique(){
+  editId=null; tempProds=[];
+  document.getElementById('modal-titulo').textContent='Nuevo Tique';
+  document.getElementById('t-fecha').value=today();
+  document.getElementById('t-total').value='';
+  document.getElementById('import-status').innerHTML='';
+  document.getElementById('json-file').value='';
+  TIENDAS.forEach(function(s){ document.getElementById('chip-'+s).classList.remove('selected'); });
+  selTiendaVal='';
+  renderProdsList();
+  openModal('modal-tique');
+}
+
+function importJSON(input){
+  var file=input.files[0];
+  if(!file) return;
+  var st=document.getElementById('import-status');
+  st.innerHTML='<div style="color:var(--muted);font-size:var(--fs-xs)">Leyendo...</div>';
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var data=JSON.parse(e.target.result);
+      if(data.tienda){
+        var t=TIENDAS.find(function(x){ return data.tienda.toLowerCase().indexOf(x.toLowerCase())>=0; });
+        if(t) selTienda(t);
+      }
+      if(data.fecha) document.getElementById('t-fecha').value=data.fecha;
+      if(data.total) document.getElementById('t-total').value=data.total;
+      if(data.productos && data.productos.length){
+        data.productos.forEach(function(p){
+          tempProds.push({id:genId(),nombre:p.nombre||'Producto',precio:parseFloat(p.precio)||0,cantidad:parseFloat(p.cantidad)||1,unidad:p.unidad||'ud',categoria:p.categoria||'Alimentación'});
+        });
+        renderProdsList();
+        st.innerHTML='<div class="status-ok">✅ '+data.productos.length+' productos importados</div>';
+      } else {
+        st.innerHTML='<div class="status-err">⚠️ Sin productos en el JSON</div>';
+      }
+    } catch(err){
+      st.innerHTML='<div class="status-err">⚠️ Archivo no válido</div>';
+    }
+    input.value='';
+  };
+  reader.readAsText(file);
+}
+
+function addProd(){
+  var nombre=document.getElementById('p-nombre').value.trim();
+  var precio=parseFloat(document.getElementById('p-precio').value);
+  if(!nombre){ showToast('⚠️ Escribe el nombre'); return; }
+  if(!precio||isNaN(precio)){ showToast('⚠️ Escribe el precio'); return; }
+  tempProds.push({id:genId(),nombre:nombre,precio:precio,cantidad:parseFloat(document.getElementById('p-cantidad').value)||1,unidad:document.getElementById('p-unidad').value,categoria:document.getElementById('p-cat').value});
+  document.getElementById('p-nombre').value='';
+  document.getElementById('p-precio').value='';
+  document.getElementById('p-cantidad').value='';
+  renderProdsList();
+  showToast('✅ Añadido');
+}
+
+function removeProd(id){ tempProds=tempProds.filter(function(p){ return p.id!==id; }); renderProdsList(); }
+
+function renderProdsList(){
+  var el=document.getElementById('prods-lista');
+  if(!tempProds.length){ el.innerHTML='<div style="color:var(--muted);font-size:var(--fs-xs);text-align:center;padding:8px 0 12px">Sin productos aún</div>'; return; }
+  el.innerHTML=tempProds.map(function(p){
+    return '<div class="prod-row"><div style="flex:1"><div class="prod-name">'+p.nombre+'</div><div class="prod-meta">'+p.cantidad+' '+p.unidad+' · '+p.categoria+'</div></div><div class="prod-price">'+p.precio.toFixed(2)+'€</div><button class="btn btn-danger" style="margin-left:8px" onclick="removeProd(\''+p.id+'\')"><i class="ti ti-trash"></i></button></div>';
+  }).join('');
+}
+
+function guardarTique(){
+  if(!selTiendaVal){ showToast('⚠️ Selecciona el supermercado'); return; }
+  if(!tempProds.length){ showToast('⚠️ Añade al menos un producto'); return; }
+  var fecha=document.getElementById('t-fecha').value||today();
+  var total=parseFloat(document.getElementById('t-total').value)||tempProds.reduce(function(s,p){ return s+p.precio; },0);
+  if(editId){
+    var idx=DB.tiques.findIndex(function(t){ return t.id===editId; });
+    DB.tiques[idx]={id:editId,tienda:selTiendaVal,fecha:fecha,total:total,productos:tempProds};
+  } else {
+    DB.tiques.unshift({id:genId(),tienda:selTiendaVal,fecha:fecha,total:total,productos:tempProds});
+  }
+  save(); closeModal('modal-tique');
+  showToast('✅ Tique guardado');
+  renderInicio(); renderTiques();
+}
+
+function getGroups(){
+  var map={};
+  DB.tiques.forEach(function(t){
+    t.productos.forEach(function(p){
+      var key=normName(p.nombre);
+      if(!map[key]) map[key]={nombre:p.nombre,entradas:[]};
+      map[key].entradas.push({tienda:t.tienda,precio:p.precio,cantidad:p.cantidad,unidad:p.unidad,fecha:t.fecha});
+    });
+  });
+  return Object.values(map);
+}
+
+function calcAhorro(){
+  var total=0; var items=[];
+  getGroups().forEach(function(g){
+    var bt={};
+    g.entradas.forEach(function(e){ var pu=e.cantidad?e.precio/e.cantidad:e.precio; if(!bt[e.tienda]||pu<bt[e.tienda].pu) bt[e.tienda]={...e,pu}; });
+    var rows=Object.entries(bt).sort(function(a,b){ return a[1].pu-b[1].pu; });
+    if(rows.length<2) return;
+    var ah=rows[rows.length-1][1].pu-rows[0][1].pu;
+    if(ah>0){ total+=ah; items.push({producto:g.nombre,tienda:rows[0][0],ahorro:ah,unidad:rows[0][1].unidad}); }
+  });
+  return {total:total,items:items.sort(function(a,b){ return b.ahorro-a.ahorro; })};
+}
+
+function renderInicio(){
+  var tqs=DB.tiques;
+  var allP=tqs.flatMap(function(t){ return t.productos; });
+  var gasto=tqs.reduce(function(s,t){ return s+(t.total||0); },0);
+  var ah=calcAhorro();
+  document.getElementById('s-tiques').textContent=tqs.length;
+  document.getElementById('s-prods').textContent=allP.length;
+  document.getElementById('s-gasto').textContent=gasto.toFixed(0)+'€';
+  document.getElementById('s-ahorro').textContent=ah.total.toFixed(2)+'€';
+  var banner=document.getElementById('saving-banner');
+  if(ah.total>0&&ah.items.length){
+    var top=ah.items[0];
+    banner.innerHTML='<div class="saving"><i class="ti ti-pig-money"></i><div><div class="saving-text">Comprando <b>'+top.producto+'</b> en <b style="color:'+TC[top.tienda]+'">'+top.tienda+'</b> ahorras</div><div class="saving-amount">−'+top.ahorro.toFixed(2)+'€ por '+top.unidad+'</div></div></div>';
+  } else banner.innerHTML='';
+  var el=document.getElementById('ultimos-tiques');
+  if(!tqs.length){ el.innerHTML='<div class="empty"><i class="ti ti-receipt-off"></i><p>Aún no tienes tiques.<br>Pulsa "Nuevo Tique" para empezar.</p></div>'; return; }
+  el.innerHTML=tqs.slice(0,3).map(tiqHTML).join('');
+}
+
+function tiqHTML(t){
+  return '<div class="ticket-item" onclick="verTique(\''+t.id+'\')"><div><div class="t-name" style="color:'+TC[t.tienda]+'">'+t.tienda+'</div><div class="t-date">'+fmtDate(t.fecha)+'</div><div class="t-items">'+t.productos.length+' productos</div></div><div style="text-align:right"><div class="t-price">'+(t.total||0).toFixed(2)+'€</div></div></div>';
+}
+
+function renderTiques(){
+  var el=document.getElementById('lista-tiques');
+  if(!DB.tiques.length){ el.innerHTML='<div class="empty"><i class="ti ti-receipt-off"></i><p>Sin tiques todavía.</p></div>'; return; }
+  el.innerHTML=DB.tiques.map(tiqHTML).join('');
+}
+
+function verTique(id){
+  var t=DB.tiques.find(function(x){ return x.id===id; });
+  if(!t) return;
+  document.getElementById('detalle-titulo').innerHTML='<span style="color:'+TC[t.tienda]+'">'+t.tienda+'</span> · '+fmtDate(t.fecha);
+  document.getElementById('detalle-content').innerHTML='<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap"><span class="badge badge-gold">'+t.productos.length+' productos</span><span class="badge badge-orange">'+(t.total||0).toFixed(2)+'€</span></div><div class="card" style="margin-bottom:14px">'+t.productos.map(function(p){ return '<div class="prod-row"><div style="flex:1"><div class="prod-name">'+p.nombre+'</div><div class="prod-meta">'+p.cantidad+' '+p.unidad+'</div></div><div class="prod-price">'+p.precio.toFixed(2)+'€</div></div>'; }).join('')+'</div><div style="display:flex;gap:8px"><button class="btn" style="flex:1" onclick="editTique(\''+id+'\')"><i class="ti ti-edit"></i> Editar</button><button class="btn btn-danger" style="flex:1" onclick="delTique(\''+id+'\')"><i class="ti ti-trash"></i> Eliminar</button></div>';
+  openModal('modal-detalle');
+}
+
+function editTique(id){
+  var t=DB.tiques.find(function(x){ return x.id===id; });
+  if(!t) return;
+  closeModal('modal-detalle');
+  editId=id; tempProds=JSON.parse(JSON.stringify(t.productos));
+  document.getElementById('modal-titulo').textContent='Editar Tique';
+  document.getElementById('t-fecha').value=t.fecha;
+  document.getElementById('t-total').value=t.total||'';
+  document.getElementById('import-status').innerHTML='';
+  TIENDAS.forEach(function(s){ document.getElementById('chip-'+s).classList.remove('selected'); });
+  selTiendaVal=t.tienda;
+  document.getElementById('chip-'+t.tienda).classList.add('selected');
+  renderProdsList();
+  openModal('modal-tique');
+}
+
+function delTique(id){
+  if(!confirm('¿Eliminar este tique?')) return;
+  DB.tiques=DB.tiques.filter(function(t){ return t.id!==id; });
+  save(); closeModal('modal-detalle');
+  showToast('🗑️ Tique eliminado');
+  renderInicio(); renderTiques();
+}
+
+function renderComparador(){
+  var q=(document.getElementById('search-prod').value||'').toLowerCase();
+  var groups=getGroups().filter(function(g){ return !q||normName(g.nombre).indexOf(q)>=0; });
+  var el=document.getElementById('comparador-lista');
+  if(!groups.length){ el.innerHTML='<div class="empty"><i class="ti ti-arrows-diff"></i><p>'+(q?'Sin resultados para "'+q+'"':'Añade tiques para comparar precios.')+'</p></div>'; return; }
+  el.innerHTML=groups.map(function(g){ return groupCard(g); }).join('');
+}
+
+function groupCard(g){
+  var bt={};
+  g.entradas.forEach(function(e){
+    if(!bt[e.tienda]) bt[e.tienda]=[];
+    bt[e.tienda].push(e);
+  });
+  var rows=TIENDAS.filter(function(t){ return bt[t]; }).map(function(tienda){
+    var entries=bt[tienda].sort(function(a,b){ return a.fecha>b.fecha?1:-1; });
+    var last=entries[entries.length-1];
+    var prev=entries.length>1?entries[entries.length-2]:null;
+    var pu=last.cantidad?last.precio/last.cantidad:last.precio;
+    var prevPu=prev?(prev.cantidad?prev.precio/prev.cantidad:prev.precio):null;
+    return {tienda:tienda,last:last,pu:pu,prevPu:prevPu,entries:entries};
+  }).sort(function(a,b){ return a.pu-b.pu; });
+  if(!rows.length) return '';
+  var bestPu=rows[0].pu;
+  var key=normName(g.nombre);
+  return '<div class="compare-card" onclick="verHist(\''+key+'\')"><div class="compare-header"><div class="compare-product">'+g.nombre+'</div>'+(rows.length>1?'<span class="badge badge-gold"><i class="ti ti-history"></i> historial</span>':'')+'</div>'+rows.map(function(r,i){
+    var isBest=i===0;
+    var pct=bestPu>0?((r.pu-bestPu)/bestPu*100).toFixed(0):0;
+    var trend='';
+    if(r.prevPu!==null){
+      var diff=r.pu-r.prevPu;
+      var dpct=((diff/r.prevPu)*100).toFixed(0);
+      if(Math.abs(diff)<0.001) trend='<div class="trend-eq">⚪ estable</div>';
+      else if(diff>0) trend='<div class="trend-up">🔴 +'+Math.abs(dpct)+'% subió</div>';
+      else trend='<div class="trend-down">🟢 −'+Math.abs(dpct)+'% bajó</div>';
+    }
+    return '<div class="compare-row'+(isBest?' best':'')+'"><div style="flex:1"><div class="compare-shop" style="color:'+TC[r.tienda]+'">'+r.tienda+'</div><div style="font-size:var(--fs-xs);color:var(--muted)">'+r.last.cantidad+' '+r.last.unidad+' · '+fmtDate(r.last.fecha)+'</div></div><div style="text-align:right;min-width:60px">'+trend+'</div><div style="text-align:right;margin-left:10px"><div class="compare-price" style="color:'+(isBest?'var(--green)':'var(--text)')+'">'+r.last.precio.toFixed(2)+'€</div><div style="font-size:12px;color:var(--muted)">'+r.pu.toFixed(2)+'€/'+r.last.unidad+'</div>'+((!isBest&&rows.length>1)?'<div style="font-size:12px;color:var(--red)">+'+pct+'%</div>':'')+'</div>'+(isBest&&rows.length>1?'<span class="best-label" style="margin-left:8px">✓</span>':'')+'</div>';
+  }).join('')+'</div>';
+}
+
+function verHist(key){
+  var g=getGroups().find(function(x){ return normName(x.nombre)===key; });
+  if(!g) return;
+  document.getElementById('hist-titulo').textContent='📈 '+g.nombre;
+  var bt={};
+  g.entradas.forEach(function(e){ if(!bt[e.tienda]) bt[e.tienda]=[]; bt[e.tienda].push(e); });
+  var rows=TIENDAS.filter(function(t){ return bt[t]; }).map(function(tienda){
+    var entries=bt[tienda].sort(function(a,b){ return a.fecha>b.fecha?1:-1; });
+    var last=entries[entries.length-1];
+    var prev=entries.length>1?entries[entries.length-2]:null;
+    var pu=last.cantidad?last.precio/last.cantidad:last.precio;
+    var prevPu=prev?(prev.cantidad?prev.precio/prev.cantidad:prev.precio):null;
+    var trend='<span class="trend-eq">⚪</span>';
+    if(prevPu!==null){ var diff=pu-prevPu; var pct=((diff/prevPu)*100).toFixed(0); if(Math.abs(diff)<0.001) trend='<span class="trend-eq">⚪ estable</span>'; else if(diff>0) trend='<span class="trend-up">🔴 +'+Math.abs(pct)+'%</span>'; else trend='<span class="trend-down">🟢 −'+Math.abs(pct)+'%</span>'; }
+    return {tienda:tienda,entries:entries,last:last,pu:pu,prevPu:prevPu,trend:trend};
+  }).sort(function(a,b){ return a.pu-b.pu; });
+  var allDates=[...new Set(g.entradas.map(function(e){ return e.fecha; }))].sort();
+  var tableHTML='<table style="width:100%;border-collapse:collapse;font-size:var(--fs-sm)"><thead><tr style="border-bottom:1px solid var(--border)"><th style="text-align:left;padding:8px 0;color:var(--muted);font-size:var(--fs-xs)">Tienda</th><th style="text-align:right;color:var(--muted);font-size:var(--fs-xs)">Precio</th><th style="text-align:right;color:var(--muted);font-size:var(--fs-xs)">Ant.</th><th style="text-align:right;color:var(--muted);font-size:var(--fs-xs)">Tendencia</th></tr></thead><tbody>'+rows.map(function(r,i){ return '<tr style="border-bottom:1px solid var(--border)'+(i===0?';background:rgba(37,211,102,.05)':'')+'"><td style="padding:10px 0;font-weight:600;color:'+TC[r.tienda]+'">'+r.tienda+(i===0&&rows.length>1?' <span class="best-label">✓</span>':'')+'</td><td style="text-align:right;font-family:Syne;font-weight:700;color:'+(i===0?'var(--green)':'var(--text)')+'">'+r.last.precio.toFixed(2)+'€</td><td style="text-align:right;color:var(--muted);font-size:var(--fs-xs)">'+(r.prevPu?(r.prevPu*(r.last.cantidad||1)).toFixed(2)+'€':'—')+'</td><td style="text-align:right">'+r.trend+'</td></tr>'; }).join('')+'</tbody></table>';
+  document.getElementById('hist-content').innerHTML=tableHTML+(allDates.length>1?'<div class="divider"></div><div class="section-label">Evolución</div><div class="chart-wrap"><canvas id="hchart"></canvas></div>':'<div style="color:var(--muted);font-size:var(--fs-xs);text-align:center;padding:16px 0">Más tiques para ver evolución</div>')+'<div class="divider"></div><div class="section-label">Historial completo</div>'+rows.map(function(r){ return '<div style="margin-bottom:12px"><div style="color:'+TC[r.tienda]+';font-weight:700;font-size:var(--fs-sm);margin-bottom:6px">'+r.tienda+'</div>'+r.entries.slice().reverse().map(function(e){ return '<div style="display:flex;justify-content:space-between;padding:8px 10px;background:var(--card2);border-radius:8px;margin-bottom:5px;font-size:var(--fs-sm)"><span style="color:var(--muted)">'+fmtDate(e.fecha)+'</span><span>'+e.cantidad+' '+e.unidad+'</span><span style="font-family:Syne;font-weight:700;color:var(--gold)">'+e.precio.toFixed(2)+'€</span></div>'; }).join('')+'</div>'; }).join('');
+  openModal('modal-hist');
+  if(allDates.length>1){
+    setTimeout(function(){
+      if(histChart) histChart.destroy();
+      var ctx=document.getElementById('hchart');
+      if(!ctx) return;
+      histChart=new Chart(ctx,{type:'line',data:{labels:allDates.map(fmtDate),datasets:rows.map(function(r){ return {label:r.tienda,data:allDates.map(function(d){ var e=r.entries.find(function(x){ return x.fecha===d; }); return e?e.precio:null; }),borderColor:TC[r.tienda],backgroundColor:TC[r.tienda]+'22',pointBackgroundColor:TC[r.tienda],pointRadius:5,borderWidth:2,tension:.3,spanGaps:true}; })},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#e8e8f0',font:{size:13}}}},scales:{x:{ticks:{color:'#8888aa'},grid:{color:'#2a2a4a'}},y:{ticks:{color:'#8888aa',callback:function(v){ return v+'€'; }},grid:{color:'#2a2a4a'}}}}});
+    },200);
+  }
+}
+
+function renderStats(){
+  var tqs=DB.tiques;
+  if(!tqs.length){ document.getElementById('stats-content').innerHTML='<div class="empty"><i class="ti ti-chart-pie"></i><p>Añade tiques para ver estadísticas.</p></div>'; return; }
+  var gasto=tqs.reduce(function(s,t){ return s+(t.total||0); },0);
+  var bt={Mercadona:0,Lidl:0,Aldi:0};
+  tqs.forEach(function(t){ bt[t.tienda]=(bt[t.tienda]||0)+(t.total||0); });
+  var bcat={};
+  tqs.flatMap(function(t){ return t.productos; }).forEach(function(p){ bcat[p.categoria]=(bcat[p.categoria]||0)+p.precio; });
+  var catRows=Object.entries(bcat).sort(function(a,b){ return b[1]-a[1]; });
+  var maxCat=catRows[0]?catRows[0][1]:1;
+  var vis={};
+  tqs.forEach(function(t){ vis[t.tienda]=(vis[t.tienda]||0)+1; });
+  var top=Object.entries(vis).sort(function(a,b){ return b[1]-a[1]; })[0];
+  document.getElementById('stats-content').innerHTML='<div class="stats-grid"><div class="stat-card"><div class="stat-val">'+gasto.toFixed(0)+'€</div><div class="stat-label">Gasto total</div></div><div class="stat-card"><div class="stat-val">'+(tqs.length?(gasto/tqs.length).toFixed(0)+'€':'—')+'</div><div class="stat-label">Media/tique</div></div></div><div class="card" style="margin-bottom:12px"><div class="card-title"><i class="ti ti-building-store"></i> Por supermercado</div>'+TIENDAS.map(function(t){ var v=bt[t]||0; var pct=gasto>0?(v/gasto*100).toFixed(0):0; return '<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="color:'+TC[t]+';font-weight:600;font-size:var(--fs-md)">'+t+'</span><span style="font-family:Syne;font-weight:700;font-size:var(--fs-md);color:var(--gold)">'+v.toFixed(2)+'€ <span style="color:var(--muted);font-size:var(--fs-xs)">('+pct+'%)</span></span></div><div class="bar-bg"><div class="bar-fill" style="width:'+pct+'%;background:'+TC[t]+'"></div></div></div>'; }).join('')+'</div>'+(top?'<div class="card" style="margin-bottom:12px"><div class="card-title"><i class="ti ti-trophy"></i> Más visitado</div><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:var(--fs-lg);font-weight:700;color:'+TC[top[0]]+'">'+top[0]+'</div><span class="badge badge-gold">'+top[1]+' visita'+(top[1]===1?'':'s')+'</span></div></div>':'')+'<div class="card"><div class="card-title"><i class="ti ti-tag"></i> Por categoría</div>'+catRows.map(function(x){ var pct=(x[1]/maxCat*100).toFixed(0); return '<div style="margin-bottom:11px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:var(--fs-sm)">'+x[0]+'</span><span style="font-family:Syne;font-weight:700;color:var(--gold);font-size:var(--fs-sm)">'+x[1].toFixed(2)+'€</span></div><div class="bar-bg"><div class="bar-fill" style="width:'+pct+'%;background:var(--orange)"></div></div></div>'; }).join('')+'</div>';
+}
+
+renderInicio();
+</script>
+</body>
+</html>
