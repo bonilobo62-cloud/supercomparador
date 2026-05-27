@@ -472,10 +472,26 @@ function handleFile(input){
   reader.readAsDataURL(file);
 }
 
+function guardarYEscanear(b64, mime){
+  const k = document.getElementById('apikey-input').value.trim();
+  if(k.startsWith('sk-')){
+    saveApiKey(k);
+    showToast('✅ Clave guardada');
+    document.getElementById('scan-status').innerHTML='';
+    scanWithAI(b64, mime);
+  } else {
+    showToast('⚠️ Clave no válida, debe empezar por sk-');
+  }
+}
+
 async function scanWithAI(b64, mime){
   const status = document.getElementById('scan-status');
   if(!getApiKey()){
-    status.innerHTML='<div style="background:rgba(239,159,39,.1);border:1px solid rgba(239,159,39,.3);border-radius:10px;padding:12px;margin-bottom:10px"><div style="color:var(--gold);font-weight:600;margin-bottom:8px">🔑 Configura tu clave API</div><input id="apikey-input" class="form-input" placeholder="sk-ant-api03-..." style="margin-bottom:8px"/><button class="btn btn-primary btn-sm" onclick="const k=document.getElementById('apikey-input').value;if(k.startsWith('sk-')){saveApiKey(k);showToast('✅ Clave guardada');scanWithAI(b64,mime);}else{showToast('⚠️ Clave no válida');}">Guardar y continuar</button></div>';
+    status.innerHTML=`<div style="background:rgba(239,159,39,.1);border:1px solid rgba(239,159,39,.3);border-radius:10px;padding:12px;margin-bottom:10px">
+      <div style="color:var(--gold);font-weight:600;margin-bottom:8px">🔑 Introduce tu clave API de Anthropic</div>
+      <input id="apikey-input" class="form-input" placeholder="sk-ant-api03-..." style="margin-bottom:8px"/>
+      <button class="btn btn-primary btn-sm" style="width:100%" onclick="guardarYEscanear(b64,mime)">Guardar y escanear</button>
+    </div>`;
     return;
   }
   status.innerHTML = `<div class="ai-loading"><div class="ai-spinner"></div><div>Analizando tique con IA...</div></div>`;
