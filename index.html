@@ -499,7 +499,7 @@ Analiza la imagen del tique y devuelve SOLO un JSON válido con este formato exa
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'application/json','x-api-key':'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','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
       body: JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:1000,
